@@ -1,0 +1,59 @@
+# 2nd floor of CSSE building
+# The doors are extra wide to facilitate walking between rooms.
+#
+#	x0	y0	x1	y1
+object	5	5	5	115
+object	5	115	240	115
+object	5	5	240	5
+object	240	5	240	115
+#
+text	30	35	Lab_2.1
+object	5	65	30	65
+object	37	65	42	65
+object	48	65	55	65
+#
+text	80	35	Lab_2.3
+object	55	5	55	65
+object	105	5	105	65
+object	55	65	65	65
+object	72	65	90	65
+object	97	65	105	65
+#
+text	130	35	Lab_2.5
+object	105	5	105	65
+object	155	5	155	65
+object	105	65	115	65
+object	122	65	140	65
+object	147	65	155	65
+#
+text	180	35	Lab_2.7
+object	155	5	155	65
+object	155	65	165	65
+object	172	65	190	65
+object	197	65	205	65
+#
+object	25	65	25	115
+object	40	75	40	115
+object	40	75	90	75
+object	90	75	90	80
+object	90	80	85	80
+object	85	80	85	90
+object	85	90	145	90
+object	145	90	145	75
+object	145	75	190	75
+object	190	75	190	90
+object	190	90	205	90
+#
+object	100	80	135	80
+#
+text	222	95	Rm_2.28
+object	205	75	240	75
+object	205	85	205	115
+object	205	115	240	115
+#
+object	5	65	25	115	# western stairwell
+object	205	5	240	75	# Lab 2.9
+object	40	75	85	90
+object	40	90	205	115
+object	85	75	90	80
+object	145	75	190	115
