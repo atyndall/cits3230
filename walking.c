@@ -21,7 +21,7 @@ static	bool		paused		= true;
 
 static EVENT_HANDLER(walkingstyle)
 {
-    static	double		dx	= 0.0;
+/*     static	double		dx	= 0.0;
     static	double		dy	= 0.0;
     static	double		newx	= 0.0;
     static	double		newy	= 0.0;
@@ -30,7 +30,7 @@ static EVENT_HANDLER(walkingstyle)
     CnetPosition	now;
     CnetTime		movenext;
 
-//  IF PAUSED, WE NEED TO CHOOSE A NEW DESTINATION AND WALKING SPEED
+ // IF PAUSED, WE NEED TO CHOOSE A NEW DESTINATION AND WALKING SPEED
     if(paused) {
 
 	CHECK(CNET_get_position(&now, NULL));
@@ -39,7 +39,7 @@ static EVENT_HANDLER(walkingstyle)
 	    int			newspeed;
 	    double		dist;
 
-//  CHOOSE A NEW DESTINATION THAT DOESN'T REQUIRE WALKING THROUGH A WALL!
+ // CHOOSE A NEW DESTINATION THAT DOESN'T REQUIRE WALKING THROUGH A WALL!
 	    do {
 		choose_position(&newdest);
 	    } while(through_an_object(now, newdest));
@@ -52,7 +52,7 @@ static EVENT_HANDLER(walkingstyle)
 	    nsteps	= dist / newspeed;
 	} while(nsteps < 3);		// ensure we'll take at least 3 steps
 
-//  CALCULATE MOVEMENTS PER STEP
+ // CALCULATE MOVEMENTS PER STEP
 	dx	= (dx / nsteps);
 	dy	= (dy / nsteps);
 	newx	= now.x;
@@ -60,7 +60,7 @@ static EVENT_HANDLER(walkingstyle)
 	paused	= false;		// and off we go....
     }
 
-//  WE'RE WALKING;  DO WE STILL HAVE SOME STEPS TO TAKE?
+ // WE'RE WALKING;  DO WE STILL HAVE SOME STEPS TO TAKE?
     if(nsteps > 0) {
 	newx	+= dx;
 	newy	+= dy;
@@ -73,27 +73,28 @@ static EVENT_HANDLER(walkingstyle)
 	--nsteps;
 	movenext = WALK_FREQUENCY;
     }
-//  WE'VE FINISHED WALKING, SO WE PAUSE HERE FOR A WHILE
+ // WE'VE FINISHED WALKING, SO WE PAUSE HERE FOR A WHILE
     else {
 	paused	= true;
 	nsteps	= 0;
 	movenext = (CNET_rand() % (MAX_PAUSE-MIN_PAUSE) + MIN_PAUSE) * 1000000;
     }
 
-//  RESCHEDULE THIS WALKING EVENT
-    tid	= CNET_start_timer(EV_WALKING, movenext, data);
+ // RESCHEDULE THIS WALKING EVENT
+    tid	= CNET_start_timer(EV_WALKING, movenext, data); */
 }
 
 // -----------------------------------------------------------------------
 
 void init_walking(void)
 {
-    CnetPosition	start;
+  // TODO: REMOVE
+    //CnetPosition	start;
 
     CHECK(CNET_set_handler(EV_WALKING, walkingstyle, 0));
 
-    choose_position(&start);
-    CHECK(CNET_set_position(start));
+    // choose_position(&start);
+    // CHECK(CNET_set_position(start));
 }
 
 void start_walking(void)
