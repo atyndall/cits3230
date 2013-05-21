@@ -543,19 +543,14 @@ static void up_from_dll(int link, const char *data, size_t length)
 // called when one of this node's wifi DLLs comes out of backoff mode
 EVENT_HANDLER(ap_wifi_backon) 
 {
-  //printf("ap_wifi_backon\n");
-
   int link = data;
-  dll_wifi_backon(dll_states[link].data.wifi);
-
-  //printf("ap_wifi_backon RETURN\n");
+  dll_wifi_backon(dll_states[link].data.wifi); 
 }
 
 // called when one of this node's ethernet DLLs comes out of backoff mode
 EVENT_HANDLER(ap_ether_backon)
 {
   int link = data;
-  
   dll_eth_backon(dll_states[link].data.ethernet);
 }
 
@@ -563,7 +558,6 @@ EVENT_HANDLER(ap_ether_backon)
 EVENT_HANDLER(ap_ether_sense)
 {
   int link = data;
-  
   dll_eth_carrier_sense(dll_states[link].data.ethernet);
 }
 
@@ -571,8 +565,8 @@ EVENT_HANDLER(ap_ether_sense)
 EVENT_HANDLER(ap_handle_collision)
 {
   int link = data;
-
-  if(dll_states[link].type != DLL_ETHERNET)
+ 
+  if(dll_states[link].type == DLL_ETHERNET)
   {
     dll_eth_handle_collision(dll_states[link].data.ethernet);
   }
@@ -584,13 +578,6 @@ void reboot_accesspoint()
 {
   // We require each node to have a different stream of random numbers.
   CNET_srand(nodeinfo.time_of_day.sec + nodeinfo.nodenumber);
-  
-  // Provide the required event handlers.
-  CHECK(CNET_set_handler(EV_PHYSICALREADY, physical_ready, 0));
-  CHECK(CNET_set_handler(WIFI_BACKOFF_TIMER, ap_wifi_backon, 0));
-  CHECK(CNET_set_handler(ETHER_BACKOFF_TIMER, ap_ether_backon, 0));
-  CHECK(CNET_set_handler(ETHER_CARRIER_SENSE_TIMER, ap_ether_sense, 0));
-  CHECK(CNET_set_handler(EV_FRAMECOLLISION, ap_handle_collision, 0));
     
   // Prepare to talk via our wireless connection.
   CHECK(CNET_set_wlan_model(my_WLAN_model));
@@ -603,6 +590,11 @@ void reboot_accesspoint()
   // Setup our data link layer instances.
   dll_states = calloc(nodeinfo.nlinks + 1, sizeof(struct dll_state));
   
+  printf("Link summary:\n");
+  
+  int num_lans = 0;
+  int num_wlans = 0;
+  
   for (int link = 0; link <= nodeinfo.nlinks; ++link) {
     switch (linkinfo[link].linktype) {
       case LT_LOOPBACK:
@@ -614,12 +606,14 @@ void reboot_accesspoint()
         break;
       
       case LT_LAN:
+        num_lans++;
         dll_states[link].type = DLL_ETHERNET;
         dll_states[link].data.ethernet = dll_eth_new_state(link, up_from_dll);
         if(ENABLE_ROUTING){ init_routing_table(link); }
         break;
       
       case LT_WLAN:
+        num_wlans++;
         dll_states[link].type = DLL_WIFI;
         dll_states[link].data.wifi = dll_wifi_new_state(link,
                                                         up_from_dll,
@@ -629,6 +623,18 @@ void reboot_accesspoint()
         break;
     }
   }
+  
+  if (num_lans > 1 || num_wlans > 1) {
+    printf("This solution is not designed to cope with multiple LANs or WLANs attached to an access point.");
+    exit(1);
+  }
+  
+  // Provide the required event handlers. (-1 means the data attribute doesn't matter)
+  CHECK(CNET_set_handler(EV_PHYSICALREADY, physical_ready, -1));
+  CHECK(CNET_set_handler(WIFI_BACKOFF_TIMER, ap_wifi_backon, -1));
+  CHECK(CNET_set_handler(ETHER_BACKOFF_TIMER, ap_ether_backon, -1));
+  CHECK(CNET_set_handler(ETHER_CARRIER_SENSE_TIMER, ap_ether_sense, -1));
+  CHECK(CNET_set_handler(EV_FRAMECOLLISION, ap_handle_collision, -1));
  
   // printf("reboot_accesspoint() complete.\n");
 }

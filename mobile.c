@@ -684,13 +684,26 @@ void reboot_mobile()
   // We require each node to have a different stream of random numbers.
   CNET_srand(nodeinfo.time_of_day.sec + nodeinfo.nodenumber);
 
-  // Provide the required event handlers.
-  CHECK(CNET_set_handler(EV_PHYSICALREADY, physical_ready, 0));
-  CHECK(CNET_set_handler(EV_APPLICATIONREADY, application_ready, 0));
-  CHECK(CNET_set_handler(WIFI_PROBE_TIMER, send_probe, 0));
-  CHECK(CNET_set_handler(WIFI_REASSOCIATE_TIMER, reassociate, 0));
-  CHECK(CNET_set_handler(WIFI_BACKOFF_TIMER, mobile_wifi_backon, 0));
-  CHECK(CNET_set_handler(NL_RESEND_WINDOW_TIMER, resend_window, 0));
+  // Setup our data link layer instances.
+  dll_states = calloc(nodeinfo.nlinks + 1, sizeof(struct dll_wifi_state *));
+  
+  for (int link = 1; link <= nodeinfo.nlinks; ++link) {
+    if (linkinfo[link].linktype == LT_WLAN) {
+      dll_states[link] = dll_wifi_new_state(link,
+                                            up_from_dll,
+                                            false, /* is_ds */
+                                            dll_ready,
+                                            do_nothing);
+    }
+  }
+  
+  // Provide the required event handlers. (-1 means the data attribute doesn't matter)
+  CHECK(CNET_set_handler(EV_PHYSICALREADY, physical_ready, -1));
+  CHECK(CNET_set_handler(EV_APPLICATIONREADY, application_ready, -1));
+  CHECK(CNET_set_handler(WIFI_PROBE_TIMER, send_probe, -1));
+  CHECK(CNET_set_handler(WIFI_REASSOCIATE_TIMER, reassociate, -1));
+  CHECK(CNET_set_handler(WIFI_BACKOFF_TIMER, mobile_wifi_backon, -1));
+  CHECK(CNET_set_handler(NL_RESEND_WINDOW_TIMER, resend_window, -1));
 
   // Initialize mobility.
   init_walking();
@@ -701,19 +714,6 @@ void reboot_mobile()
 
   // Prepare to talk via our wireless connection.
   CNET_set_wlan_model(my_WLAN_model);
-  
-  // Setup our data link layer instances.
-  dll_states = calloc(nodeinfo.nlinks + 1, sizeof(struct dll_wifi_state *));
-
-  for (int link = 1; link <= nodeinfo.nlinks; ++link) {
-    if (linkinfo[link].linktype == LT_WLAN) {
-      dll_states[link] = dll_wifi_new_state(link,
-                                            up_from_dll,
-                                            false, /* is_ds */
-                                            dll_ready,
-                                            do_nothing);
-    }
-  }
 
   //probe pretty soon after initiating (but with a random offset, to prevent all nodes
   //from deterministically probing at the same time after simulation start)
