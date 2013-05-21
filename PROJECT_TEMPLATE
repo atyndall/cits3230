@@ -1,0 +1,103 @@
+
+compile		= "project.c ap.c dll_ethernet.c dll_wifi.c mapping.c mobile.c walking.c -lm"
+
+rebootargs	= "csse2nd.map"
+
+tracefile	= "badtrace"
+
+messagerate = %MESSAGERATE%
+probframecorrupt = %PROBFRAMECORRUPT%
+probframeloss = %PROBFRAMELOSS%
+
+minmessagesize = 100bytes
+maxmessagesize = 1024bytes
+
+mapwidth	= 250
+mapheight	= 120
+mapgrid		= 10
+mapscale	= 0.25
+
+icontitle	= "%n"
+
+
+lansegment CSSE {
+  lan-bandwidth = 1000Mbps
+  
+  x=5, y=65
+}
+
+accesspoint AP1 {
+  x=30, y=60
+
+  wlan { }
+
+  lan to CSSE {
+    nicaddr = 00:90:27:62:58:84
+  }
+}
+
+accesspoint AP2 {
+  x=80, y=60
+
+  wlan { }
+
+  lan to CSSE {
+    nicaddr = 00:90:27:41:B0:BE
+  }
+}
+
+accesspoint AP3 {
+  x=130, y=60
+
+  wlan { }
+
+  lan to CSSE {
+    nicaddr = 00:90:27:76:13:AE
+  }
+}
+
+accesspoint AP4 {
+  x=180, y=60
+
+  wlan { }
+
+  lan to CSSE {
+    nicaddr = 00:45:23:6E:B2:AE
+  }
+}
+
+accesspoint AP5 {
+  x=230, y=80
+
+  wlan { }
+
+  lan to CSSE {
+    nicaddr = 00:B2:A5:C2:88:00
+  }
+}
+
+mobile iPod00 { wlan { } }
+mobile iPod01 { wlan { } }
+mobile iPod02 { wlan { } }
+mobile iPod03 { wlan { } }
+mobile iPod04 { wlan { } }
+
+#if 0
+mobile iPod05 { wlan { } }
+mobile iPod06 { wlan { } }
+mobile iPod07 { wlan { } }
+mobile iPod08 { wlan { } }
+mobile iPod09 { wlan { } }
+
+mobile iPod10 { wlan { } }
+mobile iPod11 { wlan { } }
+mobile iPod12 { wlan { } }
+mobile iPod13 { wlan { } }
+mobile iPod14 { wlan { } }
+
+mobile iPod15 { wlan { } }
+mobile iPod16 { wlan { } }
+mobile iPod17 { wlan { } }
+mobile iPod18 { wlan { } }
+mobile iPod19 { wlan { } }
+#endif
