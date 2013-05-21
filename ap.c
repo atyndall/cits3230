@@ -64,7 +64,7 @@ static struct wifi_output_queue wifi_out_queue;
 ///
 static EVENT_HANDLER(physical_ready)
 {
-  //printf("physical_ready\n");
+  printf("physical_ready\n");
 
   // First we read the frame from the physical layer.
   char frame[DLL_MTU];
@@ -85,17 +85,17 @@ static EVENT_HANDLER(physical_ready)
       break;
     
     case DLL_ETHERNET:
-      //printf("AP: Received frame on Ethernet link %d.\n", link);
+      printf("AP: Received frame on Ethernet link %d.\n", link);
       dll_eth_read(dll_states[link].data.ethernet, frame, length);
       break;
     
     case DLL_WIFI:
-      //printf("AP: Received frame on WiFi link %d.\n", link);
+      printf("AP: Received frame on WiFi link %d.\n", link);
       dll_wifi_read(dll_states[link].data.wifi, frame, length);
       break;
   }
 
-  //printf("physical_ready RETURN\n");
+  printf("physical_ready RETURN\n");
 }
 
 // print this node's routing table to its output stream
@@ -155,7 +155,7 @@ void print_routing_info_packet(struct nl_packet *packet)
 // given a routing_info_entry struct, updates this node's routing table with the information
 bool update_routing_info_entry(int link, struct routing_info_entry *info_ptr)
 {
-  //printf("update_routing_info_entry\n");
+  printf("update_routing_info_entry\n");
   
   bool ap_changed = false;
 
@@ -242,14 +242,14 @@ bool update_routing_info_entry(int link, struct routing_info_entry *info_ptr)
   
   
   return ap_changed;
-  //printf("update_routing_info_entry RETURN\n");
+  printf("update_routing_info_entry RETURN\n");
 }
 
 // given an array of routing_info_entry structs (as extracted from a routing info packet),
 // updates this node's routing table accordingly
 void update_routing_info(int link, struct routing_info_entry *info_array_ptr)
 {
-  //printf("update_routing_info\n");
+  printf("update_routing_info\n");
 
   // treat data as array of routing_info_entry structs
   struct routing_info_entry info[ROUTING_TABLE_ROWS];
@@ -263,7 +263,7 @@ void update_routing_info(int link, struct routing_info_entry *info_array_ptr)
   {
     if(info[i].active) 
     {
-      //printf("updating table with packet info index: %i\n", i);
+      printf("updating table with packet info index: %i\n", i);
       if(update_routing_info_entry(link, &info[i]))
       {
         ap_changed = true;
@@ -278,13 +278,13 @@ void update_routing_info(int link, struct routing_info_entry *info_array_ptr)
     broadcast_routing_info(link);
   }
   
-  //printf("update_routing_info RETURN\n");
+  printf("update_routing_info RETURN\n");
 }
 
 // broadcast a routing info packet to inform other nodes of the routing information held by this node
 void broadcast_routing_info(int link)
 {
-  //printf("broadcast_routing_info\n");
+  printf("broadcast_routing_info\n");
 
   struct nl_packet packet = (struct nl_packet){
     .src = nodeinfo.address,
@@ -303,7 +303,7 @@ void broadcast_routing_info(int link)
     
     if(dll_states[link].data.ethernet->routing_table[i].active)
     {
-      //printf("adding entry to routing info packet (%i)\n", i);
+      printf("adding entry to routing info packet (%i)\n", i);
       memcpy(info[i].mobile_nic_addr, dll_states[link].data.ethernet->routing_table[i].mobile_nic_addr, sizeof(CnetNICaddr));
       info[i].mobile_num_addr = dll_states[link].data.ethernet->routing_table[i].mobile_num_addr;
       memcpy(info[i].ap_nic_addr, dll_states[link].data.ethernet->routing_table[i].ap_nic_addr, sizeof(CnetNICaddr));
@@ -320,24 +320,24 @@ void broadcast_routing_info(int link)
   packet.checksum = 0;  
   packet.checksum = CNET_crc32((unsigned char *)&packet, NL_PACKET_LENGTH(packet));
   
-  //printf("NL_PACKET_LENGTH(packet): %i\n", NL_PACKET_LENGTH(packet));
+  printf("NL_PACKET_LENGTH(packet): %i\n", NL_PACKET_LENGTH(packet));
   
   CnetNICaddr broadcast_addr;
   CHECK(CNET_parse_nicaddr(broadcast_addr, ETHER_BROADCAST_ADDR_STRING));
   
-  //printf("Sending routing info packet...\n");
+  printf("Sending routing info packet...\n");
   
   //print_routing_info_packet(&packet);
   
   dll_eth_write(dll_states[link].data.ethernet, broadcast_addr, (char *)&packet, NL_PACKET_LENGTH(packet), true);
   
-  //printf("broadcast_routing_info RETURN\n");
+  printf("broadcast_routing_info RETURN\n");
 }
 
 // called when a mobile node assoiates with one of this node's wifi DLLs
 void handle_new_association(CnetNICaddr *mobile_nicaddr, CnetAddr mobile_addr)
 {
-  //printf("handle_new_association\n");
+  printf("handle_new_association\n");
   // printf("Updating routing table with new association..\n");
   for (int ether_link = 1; ether_link <= nodeinfo.nlinks; ++ether_link) 
   {
@@ -355,7 +355,7 @@ void handle_new_association(CnetNICaddr *mobile_nicaddr, CnetAddr mobile_addr)
     }
   }
   
-  //printf("handle_new_association RETURN\n");
+  printf("handle_new_association RETURN\n");
 }
 
 void queue_wifi_pkt(int link, CnetNICaddr dest_nicaddr, char *data, size_t length)
@@ -404,7 +404,8 @@ static void wifi_dll_ready(int link)
   
   if(!wifi_out_queue.active[wifi_out_queue.head]) { return; }
   
-    //printf("\tSending on WiFi link %d\n", outlink);
+  printf("\tSending on WiFi link %d\n", wifi_out_queue.dest[wifi_out_queue.head]);
+  
   dll_wifi_write(dll_states[wifi_out_queue.link[wifi_out_queue.head]].data.wifi,
                  wifi_out_queue.dest[wifi_out_queue.head],
                  (char *)&(wifi_out_queue.packet_queue[wifi_out_queue.head]),
@@ -420,7 +421,7 @@ static void wifi_dll_ready(int link)
 ///
 static void up_from_dll(int link, const char *data, size_t length)
 {
-  //printf("up_from_dll\n");
+  printf("up_from_dll\n");
 
   if (length > sizeof(struct nl_packet)) {
     printf("AP: %zu is larger than a nl_packet! ignoring.\n", length);
@@ -431,13 +432,10 @@ static void up_from_dll(int link, const char *data, size_t length)
   struct nl_packet *packet = (struct nl_packet *)data;
   
   printf("AP: got packet on link %i for node %i from node %i\n", link, packet->dest, packet->src);
-  
-  //printf("AP: Received frame on link %d from node %" PRId32
-  //       " for node %" PRId32 ".\n", link, packet->src, packet->dest);
          
   if(packet->kind == NL_ROUTING_INFO)
   {
-    //printf("Got routing info packet...\n");
+    printf("Got routing info packet...\n");
     //print_routing_info_packet(packet);
 
     struct routing_info_entry info_array_ptr[ROUTING_TABLE_ROWS];
@@ -511,7 +509,7 @@ static void up_from_dll(int link, const char *data, size_t length)
         if(outlink == link && !dest_associated)
           break;
 
-        //printf("Got packet for node: %i\n", dest_addr);
+        printf("Got packet for node: %i\n", dest_addr);
 
         bool found = false;
         int record_num;
@@ -537,7 +535,7 @@ static void up_from_dll(int link, const char *data, size_t length)
     }
   }
 
-  //printf("up_from_dll RETURN\n");
+  printf("up_from_dll RETURN\n");
 }
 
 // called when one of this node's wifi DLLs comes out of backoff mode

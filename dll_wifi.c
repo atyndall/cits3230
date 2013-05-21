@@ -77,6 +77,12 @@ void dll_wifi_delete_state(struct dll_wifi_state *state)
   free(state);
 }
 
+void print_nic(CnetNICaddr addr) {
+  char str[17];
+  CNET_format_nicaddr(str, addr);
+  printf("NIC: %s\n", str);
+}
+
 void dll_wifi_queue_frame(struct dll_wifi_state *state, CnetNICaddr dest, char *data, uint16_t length, WIFI_FRAME_KIND kind, bool require_cts)
 {
   bool found_inactive = false;
@@ -97,6 +103,10 @@ void dll_wifi_queue_frame(struct dll_wifi_state *state, CnetNICaddr dest, char *
     return;
   }
   
+  // ???????????
+  
+  printf("state->frame_queue.dest[first_inactive_index]:\n");
+  print_nic(dest);
   memcpy(state->frame_queue.dest[first_inactive_index], dest, sizeof(CnetNICaddr));
   
   memcpy(state->frame_queue.data[first_inactive_index].data, data, length);
@@ -112,7 +122,7 @@ void dll_wifi_queue_frame(struct dll_wifi_state *state, CnetNICaddr dest, char *
 /// Send an RTS frame to a given destination
 void dll_wifi_send_rts(struct dll_wifi_state *state, CnetNICaddr dest, CnetTime backoff_period)
 {
-  //printf("dll_wifi_send_rts\n");
+  printf("dll_wifi_send_rts\n");
 
   WIFI_FRAME_KIND kind = WIFI_RTS;
   
@@ -126,10 +136,11 @@ void dll_wifi_send_rts(struct dll_wifi_state *state, CnetNICaddr dest, CnetTime 
 
   char dest_nicaddr_string[17];
   CNET_format_nicaddr(dest_nicaddr_string, dest);
-  //printf("\tWifi: sending RTS to: %s\n", dest_nicaddr_string);
+  printf("\tWifi: sending RTS to: %s\n", dest_nicaddr_string);
 
   //send the actual RTS frame
-  dll_wifi_transmit(state, broadcast_addr, (char *)&info, sizeof(struct wifi_rts_cts_info), kind, false);
+  // ????????
+  dll_wifi_transmit(state, dest, (char *)&info, sizeof(struct wifi_rts_cts_info), kind, false);
   
   //back-off for the specified period (another RTS will be sent after this period if the CTS has not arrived by then)
   state->can_send = false;
@@ -139,14 +150,14 @@ void dll_wifi_send_rts(struct dll_wifi_state *state, CnetNICaddr dest, CnetTime 
     CNET_start_timer(WIFI_BACKOFF_TIMER, backoff_period, state->link);
   }
 
-  //printf("dll_wifi_send_rts RETURN\n");
+  printf("dll_wifi_send_rts RETURN\n");
 }
 
 
 /// Send a CTS frame to a given destination
 void dll_wifi_send_cts(struct dll_wifi_state *state, struct wifi_rts_cts_info info)
 {
-  //printf("dll_wifi_send_cts\n");
+  printf("dll_wifi_send_cts\n");
 
   WIFI_FRAME_KIND kind = WIFI_CTS;
 
@@ -155,19 +166,19 @@ void dll_wifi_send_cts(struct dll_wifi_state *state, struct wifi_rts_cts_info in
 
   char dest_nicaddr_string[17];
   CNET_format_nicaddr(dest_nicaddr_string, info.send_addr);
-  //printf("\tWifi: sending CTS to: %s\n", dest_nicaddr_string);
+  printf("\tWifi: sending CTS to: %s\n", dest_nicaddr_string);
   
   //send the actual CTS frame
   dll_wifi_transmit(state, broadcast_addr, (char *)&info, sizeof(struct wifi_rts_cts_info), kind, false); 
 
-  //printf("dll_wifi_send_cts RETURN\n");
+  printf("dll_wifi_send_cts RETURN\n");
 }
 
 
 /// Handle an incoming RTS frame
 void dll_wifi_handle_rts(struct dll_wifi_state *state, struct wifi_rts_cts_info *info)
 {
-  //printf("dll_wifi_handle_rts\n");
+  printf("dll_wifi_handle_rts\n");
 
   char my_nicaddr[17];
   CNET_format_nicaddr(my_nicaddr, linkinfo[state->link].nicaddr);
@@ -181,7 +192,7 @@ void dll_wifi_handle_rts(struct dll_wifi_state *state, struct wifi_rts_cts_info 
   // if this node is not involved in the RTS/CTS exchange, back-off for the specified period
   if(strcmp(my_nicaddr, recv_nicaddr) != 0 && strcmp(my_nicaddr, send_nicaddr) != 0)
   { 
-    //printf("got RTS but not involved, backing off\n");
+    printf("got RTS but not involved, backing off\n");
     state->can_send = false;
     CNET_start_timer(WIFI_BACKOFF_TIMER, (CnetTime)info->backoff_period, state->link);
     return;
@@ -192,16 +203,16 @@ void dll_wifi_handle_rts(struct dll_wifi_state *state, struct wifi_rts_cts_info 
   {
     dll_wifi_send_cts(state, *info);
   } else {
-    //printf("Wifi: got RTS but currently backed-off\n");
+    printf("Wifi: got RTS but currently backed-off\n");
   }
 
-  //printf("dll_wifi_handle_rts RETURN\n");
+  printf("dll_wifi_handle_rts RETURN\n");
 }
 
 /// Handle an incoming CTS frame
 void dll_wifi_handle_cts(struct dll_wifi_state *state, struct wifi_rts_cts_info *info)
 {
-  //printf("dll_wifi_handle_cts\n");
+  printf("dll_wifi_handle_cts\n");
 
   char my_nicaddr[17];
   CNET_format_nicaddr(my_nicaddr, linkinfo[state->link].nicaddr);
@@ -211,7 +222,7 @@ void dll_wifi_handle_cts(struct dll_wifi_state *state, struct wifi_rts_cts_info 
 
   char recv_nicaddr[17];
   CNET_format_nicaddr(recv_nicaddr, info->recv_addr);
-  //printf("\tWifi: got CTS from: %s\n", recv_nicaddr);
+  printf("\tWifi: got CTS from: %s\n", recv_nicaddr);
 
   // if this CTS is not for this node, back-off for the specified period
   if(strcmp(my_nicaddr, send_nicaddr) != 0) 
@@ -233,14 +244,14 @@ void dll_wifi_handle_cts(struct dll_wifi_state *state, struct wifi_rts_cts_info 
     printf("WIFI: transmitting frame for node MAC: %s\n", dest_nicaddr);
   }
 
-  //printf("dll_wifi_handle_cts RETURN\n");
+  printf("dll_wifi_handle_cts RETURN\n");
 }
 
 /// Attempt to associate with an AP
 void dll_wifi_associate_request(struct dll_wifi_state *state,
                        CnetNICaddr dest_addr)
 {
-  //printf("dll_wifi_associate_request\n");
+  printf("dll_wifi_associate_request\n");
 
   char dest_addr_string[17];
   CNET_format_nicaddr(dest_addr_string, (unsigned char *)dest_addr);
@@ -251,17 +262,17 @@ void dll_wifi_associate_request(struct dll_wifi_state *state,
   struct wifi_assoc_request_info info;
   memcpy(info.mobile_addr, linkinfo[state->link].nicaddr, sizeof(CnetNICaddr));
   info.node_number = nodeinfo.address;
-  //printf("info.node_number: %i\n", info.node_number);
   
+  print_nic(dest_addr);
   dll_wifi_queue_frame(state, dest_addr, (char *)&info, sizeof(struct wifi_assoc_request_info), kind, true);
 
-  //printf("dll_wifi_associate_request RETURN\n");
+  printf("dll_wifi_associate_request RETURN\n");
 }
 
 /// send a disassociation notice frame to a previously-associated AP
 void dll_wifi_disassociate(struct dll_wifi_state *state, CnetNICaddr dest_addr)
 {
-  //printf("dll_wifi_disassociate\n");
+  printf("dll_wifi_disassociate\n");
 
   state->assoc_record.valid = false;
 
@@ -272,13 +283,21 @@ void dll_wifi_disassociate(struct dll_wifi_state *state, CnetNICaddr dest_addr)
   WIFI_FRAME_KIND kind = WIFI_DISASSOCIATE_NOTICE;
   dll_wifi_queue_frame(state, dest_addr, (char *)(linkinfo[state->link].nicaddr), sizeof(CnetNICaddr), kind, true);
 
-  //printf("dll_wifi_disassociate RETURN\n");
+  printf("dll_wifi_disassociate RETURN\n");
 }
 
 /// As a mobile node, go through the gathered AP records, choose the best one and associate with it if it isn't already
 void dll_wifi_reassociate(struct dll_wifi_state *state) 
 {
   printf("dll_wifi_reassociate\n");
+  printf("###########################\n");
+  printf("###########################\n");
+  printf("###########################\n");
+  printf("###########################\n");
+  printf("###########################\n");
+  printf("###########################\n");
+  printf("###########################\n");
+  printf("###########################\n");
 
   // find the AP with the best signal strength for this node
   double best_dbm = 0;
@@ -311,24 +330,26 @@ void dll_wifi_reassociate(struct dll_wifi_state *state)
       {
         dll_wifi_disassociate(state, state->assoc_record.associated_ap);
       }
-      dll_wifi_associate_request(state, state->ap_record_table[best_index].ap_nic_addr);
+      printf("state->ap_record_table[best_index].ap_nic_addr:\n");
+      print_nic(state->ap_record_table[best_index].ap_nic_addr);
+      dll_wifi_associate_request(state, state->ap_record_table[best_index].ap_nic_addr); // OF INTEREST
     }
   }
 
-  //printf("dll_wifi_reassociate RETURN\n");
+  printf("dll_wifi_reassociate RETURN\n");
 }
 
 /// on receiving a disassiciation notice, clear the association record for the notifying node
 void dll_wifi_handle_disassociation_notice(struct dll_wifi_state *state, CnetNICaddr *addr_ptr)
 {
-  //printf("dll_wifi_handle_disassociation_notice\n");
+  printf("dll_wifi_handle_disassociation_notice\n");
 
   CnetNICaddr client_addr;
   memcpy(&client_addr, addr_ptr, sizeof(CnetNICaddr *));
   char client_addr_string[17];
   CNET_format_nicaddr(client_addr_string, client_addr);
 
-  //printf("Wifi: disassociated from %s\n", client_addr_string);
+  printf("Wifi: disassociated from %s\n", client_addr_string);
   
   int i;
   for (i = 0; i < WIFI_MAX_ASSOCIATED_CLIENTS; i++)
@@ -344,13 +365,13 @@ void dll_wifi_handle_disassociation_notice(struct dll_wifi_state *state, CnetNIC
     } 
   }
 
-  //printf("dll_wifi_handle_disassociation_notice RETURN\n");
+  printf("dll_wifi_handle_disassociation_notice RETURN\n");
 }
 
 /// As an AP, respond to an association request from a mobile node
 void dll_wifi_associate_respond(struct dll_wifi_state *state, struct wifi_assoc_request_info *info)
 {
-  //printf("dll_wifi_associate_respond\n");
+  printf("dll_wifi_associate_respond\n");
 
   char client_addr_string[17];
   CNET_format_nicaddr(client_addr_string, (unsigned char *)info->mobile_addr);
@@ -373,7 +394,7 @@ void dll_wifi_associate_respond(struct dll_wifi_state *state, struct wifi_assoc_
         memcpy(state->assoc_records[i].associated_client, info->mobile_addr, sizeof(CnetNICaddr));
         state->assoc_records[i].client_node_number = info->node_number;
 
-        //printf("state->assoc_records[i].client_node_number: %i\n", state->assoc_records[i].client_node_number);
+        printf("state->assoc_records[i].client_node_number: %i\n", state->assoc_records[i].client_node_number);
               
         found = true;
 	      break;
@@ -395,7 +416,7 @@ void dll_wifi_associate_respond(struct dll_wifi_state *state, struct wifi_assoc_
     rec.client_node_number = info->node_number;
     state->assoc_records[min_empty_slot] = rec;
 
-    //printf("state->assoc_records[min_empty_slot].client_node_number: %i\n", state->assoc_records[min_empty_slot].client_node_number);
+    printf("state->assoc_records[min_empty_slot].client_node_number: %i\n", state->assoc_records[min_empty_slot].client_node_number);
   }
 
   // If the association was successful, send an association confirmation to the client and inform the NL
@@ -407,13 +428,13 @@ void dll_wifi_associate_respond(struct dll_wifi_state *state, struct wifi_assoc_
     if(ENABLE_ROUTING) { state->new_assoc_callback(&(info->mobile_addr), info->node_number); }
   }
 
-  //printf("dll_wifi_associate_respond RETURN\n");
+  printf("dll_wifi_associate_respond RETURN\n");
 }
 
 // Change the association record for this mobile node in response to an association confirmation frame
 void dll_wifi_associate_record(struct dll_wifi_state *state, CnetNICaddr *addr_ptr)
 {
-  //printf("dll_wifi_associate_record\n");
+  printf("dll_wifi_associate_record\n");
 
   CnetNICaddr ap_addr;
   memcpy(&ap_addr, addr_ptr, sizeof(CnetNICaddr *));
@@ -425,7 +446,7 @@ void dll_wifi_associate_record(struct dll_wifi_state *state, CnetNICaddr *addr_p
   memcpy(state->assoc_record.associated_ap, ap_addr, sizeof(CnetNICaddr));
   state->assoc_record.valid = true;
 
-  //printf("dll_wifi_associate_record RETURN\n");
+  printf("dll_wifi_associate_record RETURN\n");
 }
 
 /// Write a data frame to the given WiFi link.
@@ -434,18 +455,18 @@ void dll_wifi_write(struct dll_wifi_state *state,
                        const char *data,
                        uint16_t length)
 {
-  //printf("dll_wifi_write\n");
+  printf("dll_wifi_write\n");
 
   WIFI_FRAME_KIND kind = WIFI_DATA;
   dll_wifi_queue_frame(state, dest, (char *)data, length, kind, true);
 
-  //printf("dll_wifi_write RETURN\n");
+  printf("dll_wifi_write RETURN\n");
 }
 
 // send a wifi probe frame to discover APs and determine RTT and signal strength
 void dll_wifi_probe(struct dll_wifi_state *state)
 {
-  //printf("dll_wifi_probe\n");
+  printf("dll_wifi_probe\n");
 
   printf("\tWiFi: probing for APs.\n"); 
 
@@ -471,13 +492,13 @@ void dll_wifi_probe(struct dll_wifi_state *state)
 
   dll_wifi_queue_frame(state, broadcast_addr, (char *)&info, length, kind, false);
 
-  //printf("dll_wifi_probe RETURN\n");
+  printf("dll_wifi_probe RETURN\n");
 }
 
 /// respond to a wifi probe request (as an AP)
 void dll_wifi_probe_respond(struct dll_wifi_state *state, struct wifi_probe_info *info) 
 {
-  //printf("dll_wifi_probe_respond\n");
+  printf("dll_wifi_probe_respond\n");
 
   struct wifi_probe_response_info response_info;
 
@@ -493,15 +514,15 @@ void dll_wifi_probe_respond(struct dll_wifi_state *state, struct wifi_probe_info
 
   char mobile_addr_string[17];
   CNET_format_nicaddr(mobile_addr_string, (unsigned char *)info->mobile_addr);
-  //printf("\t Wifi: responded to probe request from %s\n", mobile_addr_string);
+  printf("\t Wifi: responded to probe request from %s\n", mobile_addr_string);
 
-  //printf("dll_wifi_probe_respond RETURN\n");
+  printf("dll_wifi_probe_respond RETURN\n");
 }
 
 /// add a received probe response RTT record to the (recently cleared) AP table
 void dll_wifi_update_ap_records(struct dll_wifi_state *state, struct wifi_probe_response_info *info, CnetTime recv_time)
 {
-  //printf("dll_wifi_update_ap_records\n");
+  printf("dll_wifi_update_ap_records\n");
 
   CnetTime send_time = info->send_timestamp;
   CnetTime rtt = recv_time - send_time;
@@ -528,7 +549,7 @@ void dll_wifi_update_ap_records(struct dll_wifi_state *state, struct wifi_probe_
     }
   }
 
-  //printf("dll_wifi_update_ap_records RETURN\n");
+  printf("dll_wifi_update_ap_records RETURN\n");
 }
 
 /// Transmit some data over the WiFi link.
@@ -539,7 +560,7 @@ void dll_wifi_transmit(struct dll_wifi_state *state,
                        WIFI_FRAME_KIND kind,
                        bool require_cts)
 {
-  //printf("dll_wifi_transmit\n");
+  printf("dll_wifi_transmit\n");
 
   if (!data || length == 0 || length > WIFI_MAXDATA)
     return;
@@ -553,6 +574,7 @@ void dll_wifi_transmit(struct dll_wifi_state *state,
     .length = length
   };
  
+  print_nic(dest);
   // Set the destination and source address.
   memcpy(frame.dest, dest, sizeof(CnetNICaddr));
   memcpy(frame.src, linkinfo[state->link].nicaddr, sizeof(CnetNICaddr));
@@ -569,7 +591,7 @@ void dll_wifi_transmit(struct dll_wifi_state *state,
 
   if(require_cts)
   {
-    //printf("resetting RTS resend attempts\n");
+    printf("resetting RTS resend attempts\n");
     state->rts_resend_attempts = 0;
     state->cached_frame = frame;
     state->cached_frame_length = frame_length;
@@ -589,13 +611,13 @@ void dll_wifi_transmit(struct dll_wifi_state *state,
     CHECK(CNET_write_physical(state->link, &frame, &frame_length));
   }
 
-  //printf("dll_wifi_transmit RETURN\n");
+  printf("dll_wifi_transmit RETURN\n");
 }
 
 // Notify the NL that this link is ready to accept a frame
 void dll_wifi_notify_ready(struct dll_wifi_state *state)
 {
-  //printf("dll_wifi_notify_ready\n");
+  printf("dll_wifi_notify_ready\n");
 
   if(state->can_send) 
   {
@@ -605,7 +627,7 @@ void dll_wifi_notify_ready(struct dll_wifi_state *state)
 	  }
   }
 
-  //printf("dll_wifi_notify_ready RETURN\n");
+  printf("dll_wifi_notify_ready RETURN\n");
 }
 
 // check if this DLL is ready to accept a frame, and notify the upper layers if so
@@ -617,6 +639,7 @@ void dll_wifi_check_ready(struct dll_wifi_state *state)
     {
       printf("WIFI: transmitting queued frame\n");
       int i = state->frame_queue.head;
+      print_nic(state->frame_queue.dest[i]);
       dll_wifi_transmit(state, state->frame_queue.dest[i], state->frame_queue.data[i].data, state->frame_queue.length[i], state->frame_queue.kind[i], 
                         state->frame_queue.require_cts[i]); 
       
@@ -630,13 +653,13 @@ void dll_wifi_check_ready(struct dll_wifi_state *state)
    printf("WIFI: not ready; waiting_for_cts: %i, can_send: %i\n", state->waiting_for_cts, state->can_send);
   }
 
-  //printf("dll_wifi_check_ready RETURN\n");
+  printf("dll_wifi_check_ready RETURN\n");
 }
 
 // End the back-off, then send an RTS for the waiting frame if there is one, otherwise prepare to accept a frame
 void dll_wifi_backon(struct dll_wifi_state *state)
 {
-  //printf("dll_wifi_backon\n");
+  printf("dll_wifi_backon\n");
 
   state->can_send = true;
   if(state->waiting_for_cts)
@@ -646,7 +669,7 @@ void dll_wifi_backon(struct dll_wifi_state *state)
     dll_wifi_check_ready(state);
   }
 
-  //printf("dll_wifi_backon RETURN\n");
+  printf("dll_wifi_backon RETURN\n");
 }
 
 /// Called when a frame has been received on the WiFi link. This function will
@@ -657,9 +680,9 @@ void dll_wifi_read(struct dll_wifi_state *state,
                    const char *data,
                    size_t length)
 {
-  //printf("dll_wifi_read\n");
+  printf("dll_wifi_read\n");
 
-  //printf("WiFi: read from link %d with length %zd\n", state->link, length);
+  printf("WiFi: read from link %d with length %zd\n", state->link, length);
   
   if (length > sizeof(struct wifi_frame)) {
     printf("\tFrame is too large!\n");
@@ -686,7 +709,7 @@ void dll_wifi_read(struct dll_wifi_state *state,
   char my_addr_string[17];
   CNET_format_nicaddr(my_addr_string, linkinfo[state->link].nicaddr);
 
-  //printf("\tWifi: received frame for dest: %s\n", dest_addr_string, my_addr_string);
+  printf("\tWifi: received frame for dest: %s\n", dest_addr_string, my_addr_string);
 
   if (strcmp(dest_addr_string, my_addr_string) != 0  && strcmp(dest_addr_string, WIFI_BROADCAST_ADDR_STRING) != 0) 
   { 
@@ -697,17 +720,20 @@ void dll_wifi_read(struct dll_wifi_state *state,
   switch(frame->control.kind)
   {
     case WIFI_DATA:
+      printf("Frame type WIFI_DATA\n");
       if (state->nl_callback)
         (*(state->nl_callback))(state->link, frame->data, frame->length);
       break;
 
     case WIFI_PROBE:
+      printf("Frame type WIFI_PROBE\n");
       if(state->is_ds) {
         dll_wifi_probe_respond(state, (struct wifi_probe_info *)&(frame->data));
       }
       break;
 
     case WIFI_PROBE_RESPONSE:
+      printf("Frame type WIKI_PROBE_RESPONSE\n");
       if(!(state->is_ds)) {
 	    long recv_time = nodeinfo.time_of_day.usec;
         dll_wifi_update_ap_records(state, (struct wifi_probe_response_info *)&(frame->data), recv_time);
@@ -715,28 +741,33 @@ void dll_wifi_read(struct dll_wifi_state *state,
       break;
 
     case WIFI_ASSOCIATE_REQUEST:
+      printf("Frame type WIFI_ASSOCIATE_REQUEST\n");
       if(state->is_ds) {
         dll_wifi_associate_respond(state, (struct wifi_assoc_request_info *)&(frame->data));
       }
       break;
 
     case WIFI_ASSOCIATE_CONFIRM:
+      printf("Frame type WIFI_ASSOCIATE_CONFIRM\n");
       if(!(state->is_ds)) {
         dll_wifi_associate_record(state, (CnetNICaddr *)&(frame->data));
       }
       break;
 	  
     case WIFI_DISASSOCIATE_NOTICE:
+      printf("Frame type WIFI_DISASSOCIATE_NOTICE\n");
       if(state->is_ds) {
         dll_wifi_handle_disassociation_notice(state, (CnetNICaddr *)&(frame->data));
       }
       break;
 	
     case WIFI_RTS:
+      printf("Frame type WIFI_RTS\n");
       dll_wifi_handle_rts(state, (struct wifi_rts_cts_info *)&(frame->data));
       break;
 
     case WIFI_CTS:
+      printf("Frame type WIFI_CTS\n");
       dll_wifi_handle_cts(state, (struct wifi_rts_cts_info *)&(frame->data));
       break;
 
@@ -744,5 +775,5 @@ void dll_wifi_read(struct dll_wifi_state *state,
       printf("WiFi: unsupported frame kind encountered.\n");  
   }
 
-  //printf("dll_wifi_read RETURN\n");
+  printf("dll_wifi_read RETURN\n");
 }
