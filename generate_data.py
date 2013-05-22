@@ -5,6 +5,7 @@ import re
 import multiprocessing
 import random
 import sys
+import time
 
 CNET_PATH = './cnet-exe'
 
@@ -31,7 +32,7 @@ losses = [
 ]
 
 headers = [
-  'seed', 'rate', 'corrupt', 'loss', 'execstatus', 'execout',
+  'seed', 'rate', 'corrupt', 'loss', 'execstatus', 'execout', 'exectime',
   'Simulation time',
   'Events raised',
   'API errors',
@@ -92,18 +93,21 @@ def compute(data):
     out = out.replace('%PROBFRAMELOSS%', str(loss))
     f.write(out)
   
+  start_time = time.time()
   try:
     res = check_output([CNET_PATH, '-z', '-W', '-g', '-q', '-m', str(60 * 24), '-S', str(seed), '-e', str(runtime), randname])
   except subprocess.CalledProcessError as e:
     print "TERMINATED: cnet with s=%d, r=%s, c=%d, l=%d" % (seed, rate, corrupt, loss)
     print e.output
     sys.stdout.flush()
-    return [seed, rate, corrupt, loss, 'failure', e.output]
-  
+    end_time = time.time()
+    return [seed, rate, corrupt, loss, 'failure', e.output, (end_time - start_time)]
+    
+  end_time = time.time()
   print "COMPLETE: cnet with s=%d, r=%s, c=%d, l=%d" % (seed, rate, corrupt, loss)
   sys.stdout.flush()
   
-  csvline = [seed, rate, corrupt, loss, 'success', res]
+  csvline = [seed, rate, corrupt, loss, 'success', res, (end_time - start_time)]
   
   for line in res.split('\n')[1:16]:
     r = resreg.search(line)
