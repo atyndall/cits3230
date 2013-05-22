@@ -44,7 +44,7 @@ EVENT_HANDLER(info)
 void tprint_nic(char* desc, CnetNICaddr addr) {
   char str[17];
   CNET_format_nicaddr(str, addr);
-  printf("%s: %s\n", desc, str);
+  //printf("%s: %s\n", desc, str);
 }
 
 void print_nic(CnetNICaddr addr) {

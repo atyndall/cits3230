@@ -94,9 +94,7 @@ void dll_wifi_queue_frame(struct dll_wifi_state *state, CnetNICaddr dest, char *
     //printf("WIFI ERROR: frame queue is full\n");
     return;
   }
-  
-  // ???????????
-  
+
   //printf("state->frame_queue.dest[first_inactive_index]:\n");
   print_nic(dest);
   memcpy(state->frame_queue.dest[first_inactive_index], dest, sizeof(CnetNICaddr));
@@ -131,7 +129,6 @@ void dll_wifi_send_rts(struct dll_wifi_state *state, CnetNICaddr dest, CnetTime 
   //printf("\tWifi: sending RTS to: %s\n", dest_nicaddr_string);
 
   //send the actual RTS frame
-  // ????????
   dll_wifi_transmit(state, dest, (char *)&info, sizeof(struct wifi_rts_cts_info), kind, false);
   
   //back-off for the specified period (another RTS will be sent after this period if the CTS has not arrived by then)
@@ -161,7 +158,6 @@ void dll_wifi_send_cts(struct dll_wifi_state *state, struct wifi_rts_cts_info in
   //printf("\tWifi: sending CTS to: %s\n", dest_nicaddr_string);
   
   //send the actual CTS frame
-  // ???? was broadcast
   dll_wifi_transmit(state, info.send_addr, (char *)&info, sizeof(struct wifi_rts_cts_info), kind, false); 
 
   //printf("dll_wifi_send_cts RETURN\n");

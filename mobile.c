@@ -435,7 +435,7 @@ void up_from_dll(int link, const char *data, size_t length)
   memset(&packet, 0, sizeof(packet));
   memcpy(&packet, data, length);
   
-  //printf("MOBILE: Received packet from dll on link %d from node %" PRId32
+  printf("MOBILE: Received packet from dll on link %d from node %" PRId32
          " for node %" PRId32 " with seqno: %i.\n", link, packet.src, packet.dest, packet.seq_no);
   
   uint32_t checksum = packet.checksum;
@@ -633,7 +633,7 @@ EVENT_HANDLER(application_ready)
   packet.checksum = 0;
   packet.checksum = CNET_crc32((unsigned char *)&packet, sizeof(packet));
   
-  //printf("MOBILE: Generated message for % " PRId32 ". Queueing...\n",
+  printf("MOBILE: Generated message for % " PRId32 ". Queueing...\n",
          packet.dest);
 
   queue_packet(packet.dest, (struct nl_packet *)&packet);
