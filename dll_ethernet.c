@@ -251,10 +251,10 @@ void dll_eth_read(struct dll_eth_state *state,
                   const char *data,
                   size_t length)
 {
-  //printf("Ethernet: read frame of length %zd.\n", length);
+  printf("Ethernet: read frame of length %zd.\n", length);
   
   if (length > sizeof(struct eth_frame)) {
-    //printf("\tFrame is too large!\n");
+    printf("\tFrame is too large!\n");
     return;
   }
   
@@ -274,7 +274,7 @@ void dll_eth_read(struct dll_eth_state *state,
   
   if(strcmp(frame_dest_string, my_nicaddr_string) != 0 && strcmp(frame_dest_string, ETHER_BROADCAST_ADDR_STRING) != 0) { return; }
   
-  //printf("ETH: got frame addressed to this node\n");
+  printf("ETH: got frame addressed to this node\n");
   
   // Send the frame up to the next layer.
   if (state->nl_callback)

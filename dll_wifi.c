@@ -334,7 +334,7 @@ void dll_wifi_handle_disassociation_notice(struct dll_wifi_state *state, CnetNIC
   char client_addr_string[17];
   CNET_format_nicaddr(client_addr_string, client_addr);
 
-  //printf("Wifi: disassociated from %s\n", client_addr_string);
+  printf("Wifi: disassociated from %s\n", client_addr_string);
   
   int i;
   for (i = 0; i < WIFI_MAX_ASSOCIATED_CLIENTS; i++)
@@ -425,7 +425,7 @@ void dll_wifi_associate_record(struct dll_wifi_state *state, CnetNICaddr *addr_p
   memcpy(&ap_addr, addr_ptr, sizeof(CnetNICaddr *));
   char ap_addr_string[17];
   CNET_format_nicaddr(ap_addr_string, ap_addr);
-  //printf("Wifi: association confirmed from: %s\n", ap_addr_string);
+  printf("Wifi: association confirmed from: %s\n", ap_addr_string);
 
 
   memcpy(state->assoc_record.associated_ap, ap_addr, sizeof(CnetNICaddr));

@@ -390,20 +390,17 @@ void handle_new_association(CnetNICaddr *mobile_nicaddr, CnetAddr mobile_addr)
 
 void queue_wifi_pkt(int link, CnetNICaddr dest_nicaddr, char *data, size_t length)
 {
-  printf("Inserting pkt into queue (length: %d)\n", wifi_out_queue.head + WIFI_BUFFER_LENGTH);
-  for(int i = wifi_out_queue.head; i < wifi_out_queue.head + WIFI_BUFFER_LENGTH; i++)
+  printf("Inserting pkt into queue (wifi_out_queue.head: %d)\n", wifi_out_queue.head);
+  for(int j = 0; j < WIFI_BUFFER_LENGTH; j++)
   {
-    printf("i = %d\n", i);
-    if(!wifi_out_queue.active[i % WIFI_BUFFER_LENGTH])
+    int i = (j + wifi_out_queue.head) % WIFI_BUFFER_LENGTH;
+    if(!wifi_out_queue.active[i])
     {
-      printf("attempting memcpy\n");
-      memcpy(&(wifi_out_queue.packet_queue[i % WIFI_BUFFER_LENGTH]), data, sizeof(struct nl_packet));
-      wifi_out_queue.link[i % WIFI_BUFFER_LENGTH] = link;
-      wifi_out_queue.length[i % WIFI_BUFFER_LENGTH] = length;
-      printf("attempting second memcpy\n");
-      memcpy(wifi_out_queue.dest[i % WIFI_BUFFER_LENGTH], dest_nicaddr, sizeof(CnetNICaddr));
-      wifi_out_queue.active[i % WIFI_BUFFER_LENGTH] = true;
-      
+      memcpy(&(wifi_out_queue.packet_queue[i]), data, sizeof(struct nl_packet));
+      wifi_out_queue.link[i] = link;
+      wifi_out_queue.length[i] = length;
+      memcpy(wifi_out_queue.dest[i], dest_nicaddr, sizeof(CnetNICaddr));
+      wifi_out_queue.active[i] = true;
       return;
     }
   }
@@ -556,6 +553,7 @@ static void up_from_dll(int link, const char *data, size_t length)
           printf("iteration %d\n", i);
           printf("dll_states[outlink].data.wifi: %p\n", dll_states[outlink].data.wifi);
           printf("dll_states[outlink].data.wifi->assoc_records[i]: %p\n", dll_states[outlink].data.wifi->assoc_records[i]);
+          printf("dll_states[outlink].data.wifi->assoc_records[i].valid: %d\n", dll_states[outlink].data.wifi->assoc_records[i].valid);
           printf("dll_states[outlink].data.wifi->assoc_records[i].client_node_number: %d\n", dll_states[outlink].data.wifi->assoc_records[i].client_node_number);
           if(dll_states[outlink].data.wifi->assoc_records[i].valid && dll_states[outlink].data.wifi->assoc_records[i].client_node_number == dest_addr)
           {
@@ -672,17 +670,17 @@ void reboot_accesspoint()
     exit(1);
   }
   
-  // Provide the required event handlers. (-1 means the data attribute doesn't matter)
-  CHECK(CNET_set_handler(EV_PHYSICALREADY, physical_ready, -1));
-  CHECK(CNET_set_handler(WIFI_BACKOFF_TIMER, ap_wifi_backon, -1));
-  CHECK(CNET_set_handler(ETHER_BACKOFF_TIMER, ap_ether_backon, -1));
-  CHECK(CNET_set_handler(ETHER_CARRIER_SENSE_TIMER, ap_ether_sense, -1));
-  CHECK(CNET_set_handler(EV_FRAMECOLLISION, ap_handle_collision, -1));
-  CHECK(CNET_set_handler(EV_DEBUG0, info, -1));
+  // Provide the required event handlers. (0 means the data attribute doesn't matter)
+  CHECK(CNET_set_handler(EV_PHYSICALREADY, physical_ready, 0));
+  CHECK(CNET_set_handler(WIFI_BACKOFF_TIMER, ap_wifi_backon, 0));
+  CHECK(CNET_set_handler(ETHER_BACKOFF_TIMER, ap_ether_backon, 0));
+  CHECK(CNET_set_handler(ETHER_CARRIER_SENSE_TIMER, ap_ether_sense, 0));
+  CHECK(CNET_set_handler(EV_FRAMECOLLISION, ap_handle_collision, 0));
+  CHECK(CNET_set_handler(EV_DEBUG0, info, 0));
   CHECK(CNET_set_debug_string(EV_DEBUG0, "Info"));
-  CHECK(CNET_set_handler(EV_DEBUG1, print_routing_tables, -1));
+  CHECK(CNET_set_handler(EV_DEBUG1, print_routing_tables, 0));
   CHECK(CNET_set_debug_string(EV_DEBUG1, "Routes"));
-  CHECK(CNET_set_handler(EV_DEBUG2, print_associated_nodes, -1));
+  CHECK(CNET_set_handler(EV_DEBUG2, print_associated_nodes, 0));
   CHECK(CNET_set_debug_string(EV_DEBUG2, "Assoc"));
   
  

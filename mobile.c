@@ -243,7 +243,7 @@ void add_queue_to_resend_queue(struct send_queue *queue_to_add)
     return;
   }
   
-  CHECK(CNET_start_timer(NL_RESEND_WINDOW_TIMER, NL_RESEND_TIMEOUT, first_inactive_index));
+  CNET_start_timer(NL_RESEND_WINDOW_TIMER, NL_RESEND_TIMEOUT, first_inactive_index);
 }
 
 // called when the selective-repeat ARQ timeout expires for the queue at the head of the
@@ -281,7 +281,7 @@ static void dll_ready(int link)
     uint16_t packet_length = NL_PACKET_LENGTH(packet);
   
     //finally, actually pass the packet to the DLL that claimed to be ready to accept it
-    //printf("sending ACK on link %i for node %i\n", link, packet.dest);
+    printf("sending ACK on link %i for node %i\n", link, packet.dest);
     dll_wifi_write(dll_states[link], dll_states[link]->assoc_record.associated_ap, (char *)&packet, packet_length);
     
     check_dll_ready();
@@ -313,7 +313,7 @@ static void dll_ready(int link)
       // all packets in the send window have been sent,
       // so, wait a while, then add this queue back onto
       // the output list and transmit the window again
-      //printf("MOBILE: resending queue\n");
+      printf("MOBILE: resending queue\n");
       add_queue_to_resend_queue(&send_queue);
     }
 
@@ -328,7 +328,7 @@ static void dll_ready(int link)
       uint16_t packet_length = NL_PACKET_LENGTH(packet);
   
       //finally, actually pass the packet to the DLL that claimed to be ready to accept it
-      //printf("MOBILE: sending packet on link %i for node %i with seqno: %i\n", link, packet.dest, packet.seq_no);
+      printf("MOBILE: sending packet on link %i for node %i with seqno: %i\n", link, packet.dest, packet.seq_no);
       
       dll_wifi_write(dll_states[link], dll_states[link]->assoc_record.associated_ap, (char *)&packet, packet_length);
     }
@@ -426,7 +426,7 @@ void up_from_dll(int link, const char *data, size_t length)
   //printf("up_from_dll\n");
 
   if (length > sizeof(struct nl_packet)) {
-    //printf("MOBILE ERROR: %zu is larger than a nl_packet! ignoring.\n", length);
+    printf("MOBILE ERROR: %zu is larger than a nl_packet! ignoring.\n", length);
     return;
   }
   
@@ -442,14 +442,14 @@ void up_from_dll(int link, const char *data, size_t length)
   packet.checksum = 0;
   
   if (CNET_crc32((unsigned char *)&packet, sizeof(packet)) != checksum) {
-    //printf("\tChecksum failed.\n");
+    printf("\tChecksum failed.\n");
     return;
   }
 
   packet.checksum = checksum;
   
   if (packet.dest != nodeinfo.address) {
-    //printf("\tThat's not for me.\n");
+    printf("\tThat's not for me.\n");
     return;
   }
     
@@ -481,11 +481,11 @@ void up_from_dll(int link, const char *data, size_t length)
       }
     }
 
-    //printf("creating new recv_queue for sender %i, with index %i\n", packet.src, recv_queue_index);
+    printf("creating new recv_queue for sender %i, with index %i\n", packet.src, recv_queue_index);
 
     if(!found_inactive)
     {
-      //printf("MOBILE ERROR: too many senders");
+      printf("MOBILE ERROR: too many senders");
       return;
     }
 
@@ -741,18 +741,18 @@ void reboot_mobile()
     }
   }
   
-  // Provide the required event handlers. (-1 means the data attribute doesn't matter)
-  CHECK(CNET_set_handler(EV_PHYSICALREADY, physical_ready, -1));
-  CHECK(CNET_set_handler(EV_APPLICATIONREADY, application_ready, -1));
-  CHECK(CNET_set_handler(WIFI_PROBE_TIMER, send_probe, -1));
-  CHECK(CNET_set_handler(WIFI_REASSOCIATE_TIMER, reassociate, -1));
-  CHECK(CNET_set_handler(WIFI_BACKOFF_TIMER, mobile_wifi_backon, -1));
-  CHECK(CNET_set_handler(NL_RESEND_WINDOW_TIMER, resend_window, -1));
-  CHECK(CNET_set_handler(EV_DEBUG0, info, -1));
+  // Provide the required event handlers. (0 means the data attribute doesn't matter)
+  CHECK(CNET_set_handler(EV_PHYSICALREADY, physical_ready, 0));
+  CHECK(CNET_set_handler(EV_APPLICATIONREADY, application_ready, 0));
+  CHECK(CNET_set_handler(WIFI_PROBE_TIMER, send_probe, 0));
+  CHECK(CNET_set_handler(WIFI_REASSOCIATE_TIMER, reassociate, 0));
+  CHECK(CNET_set_handler(WIFI_BACKOFF_TIMER, mobile_wifi_backon, 0));
+  CHECK(CNET_set_handler(NL_RESEND_WINDOW_TIMER, resend_window, 0));
+  CHECK(CNET_set_handler(EV_DEBUG0, info, 0));
   CHECK(CNET_set_debug_string(EV_DEBUG0, "Info"));
-  CHECK(CNET_set_handler(EV_DEBUG1, print_association, -1));
+  CHECK(CNET_set_handler(EV_DEBUG1, print_association, 0));
   CHECK(CNET_set_debug_string(EV_DEBUG1, "Assoc"));
-  CHECK(CNET_set_handler(EV_DEBUG2, print_ap_records, -1));
+  CHECK(CNET_set_handler(EV_DEBUG2, print_ap_records, 0));
   CHECK(CNET_set_debug_string(EV_DEBUG2, "APs"));
 
   // Initialize mobility.
