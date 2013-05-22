@@ -157,6 +157,28 @@ EVENT_HANDLER(print_association)
   }
 }
 
+EVENT_HANDLER(print_ap_records)
+{
+  printf("\nAP RECORDS\n");
+  for (int link = 0; link <= nodeinfo.nlinks; ++link) {
+    if (linkinfo[link].linktype == LT_WLAN) {
+      printf("  %s\n", linkinfo[link].linkname);
+      int asci = 0;
+      for (int assc = 0; assc <= WIFI_MAX_AP_RECORDS; ++assc) {
+        struct wifi_ap_record r = dll_states[link]->ap_record_table[assc];
+        if (r.up_to_date) {
+          char mac[17];
+          CNET_format_nicaddr(mac, r.ap_nic_addr);
+          printf("    MAC: %s, RTT: %d, Strength: %f\n", mac, r.latest_rtt, r.latest_sig_strength);
+          asci++;
+        }
+      }
+      if (asci == 0) {
+        printf("    None\n");
+      }
+    }
+  }
+}
 
 // instruct each wifi DLL to determine if it is ready to accept a packet, and report back
 void check_dll_ready()
@@ -740,6 +762,8 @@ void reboot_mobile()
   CHECK(CNET_set_debug_string(EV_DEBUG0, "Info"));
   CHECK(CNET_set_handler(EV_DEBUG1, print_association, -1));
   CHECK(CNET_set_debug_string(EV_DEBUG1, "Assoc"));
+  CHECK(CNET_set_handler(EV_DEBUG2, print_ap_records, -1));
+  CHECK(CNET_set_debug_string(EV_DEBUG2, "APs"));
 
   // Initialize mobility.
   // TODO

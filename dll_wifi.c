@@ -1,6 +1,7 @@
 /// This file implements our WiFi data link layer.
 
 #include "dll_wifi.h"
+#include "helpers.h"
 
 #include <cnet.h>
 #include <inttypes.h>
@@ -72,12 +73,6 @@ void dll_wifi_delete_state(struct dll_wifi_state *state)
   
   // Free any dynamic memory that is used by the members of the state.
   free(state);
-}
-
-void print_nic(CnetNICaddr addr) {
-  char str[17];
-  CNET_format_nicaddr(str, addr);
-  printf("NIC: %s\n", str);
 }
 
 void dll_wifi_queue_frame(struct dll_wifi_state *state, CnetNICaddr dest, char *data, uint16_t length, WIFI_FRAME_KIND kind, bool require_cts)
@@ -166,7 +161,8 @@ void dll_wifi_send_cts(struct dll_wifi_state *state, struct wifi_rts_cts_info in
   printf("\tWifi: sending CTS to: %s\n", dest_nicaddr_string);
   
   //send the actual CTS frame
-  dll_wifi_transmit(state, broadcast_addr, (char *)&info, sizeof(struct wifi_rts_cts_info), kind, false); 
+  // ???? was broadcast
+  dll_wifi_transmit(state, info.send_addr, (char *)&info, sizeof(struct wifi_rts_cts_info), kind, false); 
 
   printf("dll_wifi_send_cts RETURN\n");
 }
@@ -303,8 +299,11 @@ void dll_wifi_reassociate(struct dll_wifi_state *state)
   int i;
   for (i = 0; i < WIFI_MAX_ASSOCIATED_CLIENTS; i++)
   {
+    printf("Loop\n");
     if(state->ap_record_table[i].up_to_date) 
     {
+      printf("1\n");
+      tprint_nic("Possible best", state->ap_record_table[i].ap_nic_addr);
       if(best_dbm == 0 || state->ap_record_table[i].latest_sig_strength > best_dbm)
       {
         best_dbm = state->ap_record_table[i].latest_sig_strength;
@@ -571,7 +570,7 @@ void dll_wifi_transmit(struct dll_wifi_state *state,
     .length = length
   };
  
-  print_nic(dest);
+  tprint_nic("dll_wifi_transmit", dest);
   // Set the destination and source address.
   memcpy(frame.dest, dest, sizeof(CnetNICaddr));
   memcpy(frame.src, linkinfo[state->link].nicaddr, sizeof(CnetNICaddr));
@@ -596,6 +595,7 @@ void dll_wifi_transmit(struct dll_wifi_state *state,
     {
       state->can_send = false;
       state->waiting_for_cts = true;
+      tprint_nic("dll_wifi_transmit just about", dest);
       dll_wifi_send_rts(state, dest, WIFI_RTS_CTS_PERIOD);
     } else {
       state->waiting_for_cts = true;

@@ -40,3 +40,13 @@ EVENT_HANDLER(info)
     printf("    MAC: %s\n", mac);
   }
 }
+
+void tprint_nic(char* desc, CnetNICaddr addr) {
+  char str[17];
+  CNET_format_nicaddr(str, addr);
+  printf("%s: %s\n", desc, str);
+}
+
+void print_nic(CnetNICaddr addr) {
+  tprint_nic("NIC", addr);
+}
