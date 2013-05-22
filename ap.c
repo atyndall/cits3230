@@ -76,22 +76,22 @@ static EVENT_HANDLER(physical_ready)
   
   // Now we forward this information to the correct data link layer.
   if (link > nodeinfo.nlinks) {
-    // //printf("AP: Received frame on unknown link %d.\n", link);
+    printf("AP: Received frame on unknown link %d.\n", link);
     return;
   }
   
   switch (dll_states[link].type) {
     case DLL_UNSUPPORTED:
-      // //printf("AP: Received frame on unsupported link.\n");
+      printf("AP: Received frame on unsupported link.\n");
       break;
     
     case DLL_ETHERNET:
-      //printf("AP: Received frame on Ethernet link %d.\n", link);
+      printf("AP: Received frame on Ethernet link %d.\n", link);
       dll_eth_read(dll_states[link].data.ethernet, frame, length);
       break;
     
     case DLL_WIFI:
-      //printf("AP: Received frame on WiFi link %d.\n", link);
+      printf("AP: Received frame on WiFi link %d.\n", link);
       dll_wifi_read(dll_states[link].data.wifi, frame, length);
       break;
   }
@@ -390,15 +390,19 @@ void handle_new_association(CnetNICaddr *mobile_nicaddr, CnetAddr mobile_addr)
 
 void queue_wifi_pkt(int link, CnetNICaddr dest_nicaddr, char *data, size_t length)
 {
+  printf("Inserting pkt into queue (length: %d)\n", wifi_out_queue.head + WIFI_BUFFER_LENGTH);
   for(int i = wifi_out_queue.head; i < wifi_out_queue.head + WIFI_BUFFER_LENGTH; i++)
   {
+    printf("i = %d\n", i);
     if(!wifi_out_queue.active[i % WIFI_BUFFER_LENGTH])
     {
-      memcpy(&(wifi_out_queue.packet_queue[i]), data, sizeof(struct nl_packet));
-      wifi_out_queue.link[i] = link;
-      wifi_out_queue.length[i] = length;
-      memcpy(wifi_out_queue.dest[i], dest_nicaddr, sizeof(CnetNICaddr));
-      wifi_out_queue.active[i] = true;
+      printf("attempting memcpy\n");
+      memcpy(&(wifi_out_queue.packet_queue[i % WIFI_BUFFER_LENGTH]), data, sizeof(struct nl_packet));
+      wifi_out_queue.link[i % WIFI_BUFFER_LENGTH] = link;
+      wifi_out_queue.length[i % WIFI_BUFFER_LENGTH] = length;
+      printf("attempting second memcpy\n");
+      memcpy(wifi_out_queue.dest[i % WIFI_BUFFER_LENGTH], dest_nicaddr, sizeof(CnetNICaddr));
+      wifi_out_queue.active[i % WIFI_BUFFER_LENGTH] = true;
       
       return;
     }
@@ -454,19 +458,19 @@ static void up_from_dll(int link, const char *data, size_t length)
   //printf("up_from_dll\n");
 
   if (length > sizeof(struct nl_packet)) {
-    //printf("AP: %zu is larger than a nl_packet! ignoring.\n", length);
+    printf("AP: %zu is larger than a nl_packet! ignoring.\n", length);
     return;
   }
   
   // Treat this frame as a network layer packet.
   struct nl_packet *packet = (struct nl_packet *)data;
   
-  //printf("AP: got packet on link %i for node %i from node %i\n", link, packet->dest, packet->src);
+  printf("AP: got packet on link %i for node %i from node %i\n", link, packet->dest, packet->src);
          
   if(packet->kind == NL_ROUTING_INFO)
   {
-    //printf("Got routing info packet...\n");
-    //print_routing_info_packet(packet);
+    printf("Got routing info packet...\n");
+    print_routing_info_packet(packet);
 
     struct routing_info_entry info_array_ptr[ROUTING_TABLE_ROWS];
     memcpy(info_array_ptr, packet->data, ROUTING_TABLE_ROWS * sizeof(struct routing_info_entry));
@@ -501,7 +505,7 @@ static void up_from_dll(int link, const char *data, size_t length)
     }
   }
   
-  //printf("AP: dest_associated: %i\n", (int)dest_associated);
+  printf("AP: dest_associated: %i\n", (int)dest_associated);
   
   for (int outlink = 1; outlink <= nodeinfo.nlinks; ++outlink) {
     switch (dll_states[outlink].type) {
@@ -527,7 +531,7 @@ static void up_from_dll(int link, const char *data, size_t length)
           }
         }   
           
-        //printf("AP: Sending packet for node %i from node %i on Ethernet link %d \n", packet->dest, packet->src, outlink);
+        printf("AP: Sending packet for node %i from node %i on Ethernet link %d \n", packet->dest, packet->src, outlink);
         dll_eth_write(dll_states[outlink].data.ethernet,
                       next_addr,
                       data,
@@ -539,25 +543,36 @@ static void up_from_dll(int link, const char *data, size_t length)
         if(outlink == link && !dest_associated)
           break;
 
-        //printf("Got packet for node: %i\n", dest_addr);
+        printf("Got packet for node: %i\n", dest_addr);
 
+        // more debug
+        printf("outlink: %d\n", outlink);
+        printf("iterating to %d\n", WIFI_MAX_ASSOCIATED_CLIENTS);
+        
         bool found = false;
         int record_num;
         for(i = 0; i < WIFI_MAX_ASSOCIATED_CLIENTS; i++)
         {
+          printf("iteration %d\n", i);
+          printf("dll_states[outlink].data.wifi: %p\n", dll_states[outlink].data.wifi);
+          printf("dll_states[outlink].data.wifi->assoc_records[i]: %p\n", dll_states[outlink].data.wifi->assoc_records[i]);
+          printf("dll_states[outlink].data.wifi->assoc_records[i].client_node_number: %d\n", dll_states[outlink].data.wifi->assoc_records[i].client_node_number);
           if(dll_states[outlink].data.wifi->assoc_records[i].valid && dll_states[outlink].data.wifi->assoc_records[i].client_node_number == dest_addr)
           {
+            printf("found!\n");
             record_num = i;
             found = true;
             break;
           } else {
             //if(dll_states[outlink].data.wifi->assoc_records[i].valid)
-            //  //printf("assoc: %i, dest: %i\n", dll_states[outlink].data.wifi->assoc_records[i].client_node_number, dest_addr);
+            //  printf("assoc: %i, dest: %i\n", 
+            // dll_states[outlink].data.wifi->assoc_records[i].client_node_number, dest_addr);
           }
         }
 
         if(found)
         {
+          printf("preparing to queue\n");
           queue_wifi_pkt(outlink, dll_states[outlink].data.wifi->assoc_records[record_num].associated_client, (char *)packet, length);
           check_wifi_dll_ready();
           break;
