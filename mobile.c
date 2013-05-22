@@ -719,6 +719,11 @@ void init_queues() {
   ack_queue.head = 0;
 }
 
+EVENT_HANDLER(start_app_layer)
+{
+  CNET_enable_application(ALLNODES);
+}
+
 // does nothing for a mobile node; just need a valid new_association_fn_ty to pass to the dll_wifi_new_state function
 void do_nothing(CnetNICaddr *mobile_nicaddr, CnetAddr mobile_addr){}
 
@@ -748,6 +753,7 @@ void reboot_mobile()
   CHECK(CNET_set_handler(WIFI_REASSOCIATE_TIMER, reassociate, 0));
   CHECK(CNET_set_handler(WIFI_BACKOFF_TIMER, mobile_wifi_backon, 0));
   CHECK(CNET_set_handler(NL_RESEND_WINDOW_TIMER, resend_window, 0));
+  CHECK(CNET_set_handler(WIFI_APP_LAYER_START, start_app_layer, 0));
   CHECK(CNET_set_handler(EV_DEBUG0, get_info, 0));
   CHECK(CNET_set_debug_string(EV_DEBUG0, "Info"));
   CHECK(CNET_set_handler(EV_DEBUG1, print_association, 0));
@@ -756,9 +762,8 @@ void reboot_mobile()
   CHECK(CNET_set_debug_string(EV_DEBUG2, "APs"));
 
   // Initialize mobility.
-  // TODO
-  // init_walking();
-  // start_walking();
+  init_walking();
+  start_walking();
 
   // Initialize queues.
   init_queues();
@@ -771,7 +776,7 @@ void reboot_mobile()
   CNET_start_timer(WIFI_PROBE_TIMER, (CnetTime)(CNET_rand() % 500000), 0);
   
   // Start the applicaton layer
-  CNET_enable_application(ALLNODES);
+  CNET_start_timer(WIFI_APP_LAYER_START, WIFI_APP_LAYER_START_DELAY, 0);
   
   //printf("reboot_mobile() complete.\n");
   //printf("Address of this node: %" PRId32 ".\n", nodeinfo.address);

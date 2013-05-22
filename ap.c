@@ -550,11 +550,11 @@ static void up_from_dll(int link, const char *data, size_t length)
         int record_num;
         for(i = 0; i < WIFI_MAX_ASSOCIATED_CLIENTS; i++)
         {
-          printf("iteration %d\n", i);
-          printf("dll_states[outlink].data.wifi: %p\n", dll_states[outlink].data.wifi);
-          printf("dll_states[outlink].data.wifi->assoc_records[i]: %p\n", dll_states[outlink].data.wifi->assoc_records[i]);
-          printf("dll_states[outlink].data.wifi->assoc_records[i].valid: %d\n", dll_states[outlink].data.wifi->assoc_records[i].valid);
-          printf("dll_states[outlink].data.wifi->assoc_records[i].client_node_number: %d\n", dll_states[outlink].data.wifi->assoc_records[i].client_node_number);
+          // printf("iteration %d\n", i);
+          // printf("dll_states[outlink].data.wifi: %p\n", dll_states[outlink].data.wifi);
+          // printf("dll_states[outlink].data.wifi->assoc_records[i]: %p\n", dll_states[outlink].data.wifi->assoc_records[i]);
+          // printf("dll_states[outlink].data.wifi->assoc_records[i].valid: %d\n", dll_states[outlink].data.wifi->assoc_records[i].valid);
+          // printf("dll_states[outlink].data.wifi->assoc_records[i].client_node_number: %d\n", dll_states[outlink].data.wifi->assoc_records[i].client_node_number);
           if(dll_states[outlink].data.wifi->assoc_records[i].valid && dll_states[outlink].data.wifi->assoc_records[i].client_node_number == dest_addr)
           {
             printf("found!\n");
@@ -570,7 +570,7 @@ static void up_from_dll(int link, const char *data, size_t length)
 
         if(found)
         {
-          printf("preparing to queue\n");
+          // printf("preparing to queue\n");
           queue_wifi_pkt(outlink, dll_states[outlink].data.wifi->assoc_records[record_num].associated_client, (char *)packet, length);
           check_wifi_dll_ready();
           break;

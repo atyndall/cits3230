@@ -252,7 +252,7 @@ void dll_wifi_associate_request(struct dll_wifi_state *state,
   memcpy(info.mobile_addr, linkinfo[state->link].nicaddr, sizeof(CnetNICaddr));
   info.node_number = nodeinfo.address;
   
-  print_nic(dest_addr);
+  // print_nic(dest_addr);
   dll_wifi_queue_frame(state, dest_addr, (char *)&info, sizeof(struct wifi_assoc_request_info), kind, true);
 
   //printf("dll_wifi_associate_request RETURN\n");
@@ -291,7 +291,7 @@ void dll_wifi_reassociate(struct dll_wifi_state *state)
     if(state->ap_record_table[i].up_to_date) 
     {
       //printf("1\n");
-      tprint_nic("Possible best", state->ap_record_table[i].ap_nic_addr);
+      // tprint_nic("Possible best", state->ap_record_table[i].ap_nic_addr);
       if(best_dbm == 0 || state->ap_record_table[i].latest_sig_strength > best_dbm)
       {
         best_dbm = state->ap_record_table[i].latest_sig_strength;
@@ -314,7 +314,7 @@ void dll_wifi_reassociate(struct dll_wifi_state *state)
       {
         dll_wifi_disassociate(state, state->assoc_record.associated_ap);
       }
-      tprint_nic("state->ap_record_table[best_index].ap_nic_addr", state->ap_record_table[best_index].ap_nic_addr);
+      // tprint_nic("state->ap_record_table[best_index].ap_nic_addr", state->ap_record_table[best_index].ap_nic_addr);
       dll_wifi_associate_request(state, state->ap_record_table[best_index].ap_nic_addr); // OF INTEREST
     }
   } else {
@@ -584,7 +584,7 @@ void dll_wifi_transmit(struct dll_wifi_state *state,
     {
       state->can_send = false;
       state->waiting_for_cts = true;
-      tprint_nic("dll_wifi_transmit just about", dest);
+      // tprint_nic("dll_wifi_transmit just about", dest);
       dll_wifi_send_rts(state, dest, WIFI_RTS_CTS_PERIOD);
     } else {
       state->waiting_for_cts = true;
@@ -625,7 +625,7 @@ void dll_wifi_check_ready(struct dll_wifi_state *state)
     {
       //printf("WIFI: transmitting queued frame\n");
       int i = state->frame_queue.head;
-      tprint_nic("dll_wifi_check_ready", state->frame_queue.dest[i]);
+      //tprint_nic("dll_wifi_check_ready", state->frame_queue.dest[i]);
       dll_wifi_transmit(state, state->frame_queue.dest[i], state->frame_queue.data[i].data, state->frame_queue.length[i], state->frame_queue.kind[i], 
                         state->frame_queue.require_cts[i]); 
       

@@ -2,47 +2,31 @@ import subprocess
 import itertools
 import csv
 import re
+import multiprocessing
+import random
+import sys
 
 CNET_PATH = 'cnet'
 
 seeds = [
-  6115639,
-  4926537,
-  4262856,
-  9874520,
-  5869596,
-  5647578,
-  4935074,
-  5316812,
-  7922423,
-  9909705,
+  569830,
 ]
 
 rates = [
   '10000us',  # 0.01 seconds
   '100000us', # 0.1  seconds
-  '250000us', # 0.25 seconds
   '500000us', # 0.5  seconds
-  '1s',
-  '2s',
-  '4s',
-  '8s',
-  '16s',
 ]
 
 corruptions = [
   0,
   3,
-  6,
-  9,
   12,
 ]
 
 losses = [
   0,
   3,
-  6,
-  9,
   12,
 ]
 
@@ -64,33 +48,55 @@ headers = [
   'Transmission cost',
 ]
 
-runtime = '300s' # 5 minutes in microseconds
+runtime = '100us'
 
 resreg = re.compile("(.*)\s*:\s*(.*)")
 
 template = None
+
 with open('PROJECT_TEMPLATE', 'r') as f:
   template = f.read()
+
+def compute(data):
+  global template
+  seed, rate, corrupt, loss = data
+  print "RUNNING: cnet with s=%d, r=%s, c=%d, l=%d" % (seed, rate, corrupt, loss)
+  sys.stdout.flush()
+
+  randname = '%d.project' % random.randint(0, 99999)
+  
+  with open(randname, 'w') as f:
+    out = template.replace('%MESSAGERATE%', rate)
+    out = out.replace('%PROBFRAMECORRUPT%', str(corrupt))
+    out = out.replace('%PROBFRAMELOSS%', str(loss))
+    f.write(out)
+  
+  try:
+    res = subprocess.check_output([CNET_PATH, '-z', '-W', '-g', '-m', str(60), '-S', str(seed), '-e', str(runtime), randname])
+  except subprocess.CalledProcessError as e:
+    print "TERMINATED: cnet with s=%d, r=%s, c=%d, l=%d" % (seed, rate, corrupt, loss)
+    print e.output
+    return []
+  
+  print "COMPLETE: cnet with s=%d, r=%s, c=%d, l=%d" % (seed, rate, corrupt, loss)
+  sys.stdout.flush()
+  
+  csvline = []
+  for line in res.split('\n')[1:16]:
+    r = resreg.search(line)
+    csvline.append(r.groups()[1])
+    
+  return csvline
   
 with open('out.csv', 'wb') as csvf:
   csv = csv.writer(csvf)
   csv.writerow(headers)
+  
+  pool = multiprocessing.Pool(10) # Use 10 processes
+  
+  products = itertools.product(seeds, rates, corruptions, losses)
 
-  for seed, rate, corrupt, loss in itertools.product(seeds, rates, corruptions, losses):
-    print "Running cnet with s=%d, r=%s, c=%d, l=%d" % (seed, rate, corrupt, loss)
-
-    with open('PROJECT_CURR', 'w') as f:
-      out = template.replace('%MESSAGERATE%', rate)
-      out = out.replace('%PROBFRAMECORRUPT%', str(corrupt))
-      out = out.replace('%PROBFRAMELOSS%', str(loss))
-      f.write(out)
+  for result in pool.imap_unordered(compute, products):
+    csv.writerow(result)
     
-    res = subprocess.check_output([CNET_PATH, '-z', '-W', '-g', '-S', str(seed), '-e', str(runtime), 'PROJECT_CURR'])
-    
-    csvline = []
-    for line in res.split('\n')[1:16]:
-      r = resreg.search(line)
-      csvline.append(r.groups()[1])
-      
-    csv.writerow(csvline)
-    
+  pool.terminate()

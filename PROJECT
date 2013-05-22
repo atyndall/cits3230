@@ -33,35 +33,35 @@ accesspoint AP1 {
   }
 }
 
-// accesspoint AP2 {
-  // x=80, y=60
+accesspoint AP2 {
+  x=80, y=60
 
-  // wlan { }
+  wlan { }
 
-  // lan to CSSE {
-    // nicaddr = 00:90:27:41:B0:BE
-  // }
-// }
+  lan to CSSE {
+    nicaddr = 00:90:27:41:B0:BE
+  }
+}
 
-// accesspoint AP3 {
-  // x=130, y=60
+accesspoint AP3 {
+  x=130, y=60
 
-  // wlan { }
+  wlan { }
 
-  // lan to CSSE {
-    // nicaddr = 00:90:27:76:13:AE
-  // }
-// }
+  lan to CSSE {
+    nicaddr = 00:90:27:76:13:AE
+  }
+}
 
-// accesspoint AP4 {
-  // x=180, y=60
+accesspoint AP4 {
+  x=180, y=60
 
-  // wlan { }
+  wlan { }
 
-  // lan to CSSE {
-    // nicaddr = 00:45:23:6E:B2:AE
-  // }
-// }
+  lan to CSSE {
+    nicaddr = 00:45:23:6E:B2:AE
+  }
+}
 
 accesspoint AP5 {
   x=230, y=80
@@ -73,17 +73,11 @@ accesspoint AP5 {
   }
 }
 
-mobile iPod00 { 
-  x=30, y=40
-  wlan { }
-}
-// mobile iPod01 { wlan { } }
-// mobile iPod02 { wlan { } }
-// mobile iPod03 { wlan { } }
-mobile iPod04 {
-  x=230, y=90
-  wlan { }
-}
+mobile iPod00 { wlan { } }
+mobile iPod01 { wlan { } }
+mobile iPod02 { wlan { } }
+mobile iPod03 { wlan { } }
+mobile iPod04 { wlan { } }
 
 #if 0
 mobile iPod05 { wlan { } }

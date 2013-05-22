@@ -6,8 +6,6 @@ rebootargs	= "csse2nd.map"
 tracefile	= "badtrace"
 
 messagerate = %MESSAGERATE%
-probframecorrupt = %PROBFRAMECORRUPT%
-probframeloss = %PROBFRAMELOSS%
 
 minmessagesize = 100bytes
 maxmessagesize = 1024bytes
@@ -22,6 +20,8 @@ icontitle	= "%n"
 
 lansegment CSSE {
   lan-bandwidth = 1000Mbps
+  probframecorrupt = %PROBFRAMECORRUPT%
+  probframeloss = %PROBFRAMELOSS%
   
   x=5, y=65
 }
