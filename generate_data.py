@@ -93,7 +93,7 @@ def compute(data):
     f.write(out)
   
   try:
-    res = check_output([CNET_PATH, '-z', '-W', '-g', '-m', str(60 * 3), '-S', str(seed), '-e', str(runtime), randname])
+    res = check_output([CNET_PATH, '-z', '-W', '-g', '-q', '-m', str(60 * 24), '-S', str(seed), '-e', str(runtime), randname])
   except subprocess.CalledProcessError as e:
     print "TERMINATED: cnet with s=%d, r=%s, c=%d, l=%d" % (seed, rate, corrupt, loss)
     print e.output
@@ -114,6 +114,7 @@ def compute(data):
 with open('out.csv', 'wb') as csvf:
   csv = csv.writer(csvf)
   csv.writerow(headers)
+  csvf.flush()
   
   pool = multiprocessing.Pool(10) # Use 10 processes
   
@@ -121,5 +122,6 @@ with open('out.csv', 'wb') as csvf:
 
   for result in pool.imap_unordered(compute, products):
     csv.writerow(result)
+    csvf.flush()
     
   pool.terminate()
