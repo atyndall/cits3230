@@ -20,8 +20,8 @@ icontitle	= "%n"
 
 lansegment CSSE {
   lan-bandwidth = 1000Mbps
-  probframecorrupt = %PROBFRAMECORRUPT%
-  probframeloss = %PROBFRAMELOSS%
+  lan-probframecorrupt = %PROBFRAMECORRUPT%
+  lan-probframeloss = %PROBFRAMELOSS%
   
   x=5, y=65
 }
