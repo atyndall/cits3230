@@ -1,5 +1,5 @@
 
-compile		= "project.c ap.c dll_ethernet.c dll_wifi.c mapping.c mobile.c walking.c -lm"
+compile		= "project.c ap.c dll_ethernet.c dll_wifi.c mapping.c mobile.c walking.c helpers.c -lm"
 
 rebootargs	= "csse2nd.map"
 

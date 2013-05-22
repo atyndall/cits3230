@@ -748,7 +748,7 @@ void reboot_mobile()
   CHECK(CNET_set_handler(WIFI_REASSOCIATE_TIMER, reassociate, 0));
   CHECK(CNET_set_handler(WIFI_BACKOFF_TIMER, mobile_wifi_backon, 0));
   CHECK(CNET_set_handler(NL_RESEND_WINDOW_TIMER, resend_window, 0));
-  CHECK(CNET_set_handler(EV_DEBUG0, info, 0));
+  CHECK(CNET_set_handler(EV_DEBUG0, get_info, 0));
   CHECK(CNET_set_debug_string(EV_DEBUG0, "Info"));
   CHECK(CNET_set_handler(EV_DEBUG1, print_association, 0));
   CHECK(CNET_set_debug_string(EV_DEBUG1, "Assoc"));

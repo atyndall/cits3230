@@ -676,7 +676,7 @@ void reboot_accesspoint()
   CHECK(CNET_set_handler(ETHER_BACKOFF_TIMER, ap_ether_backon, 0));
   CHECK(CNET_set_handler(ETHER_CARRIER_SENSE_TIMER, ap_ether_sense, 0));
   CHECK(CNET_set_handler(EV_FRAMECOLLISION, ap_handle_collision, 0));
-  CHECK(CNET_set_handler(EV_DEBUG0, info, 0));
+  CHECK(CNET_set_handler(EV_DEBUG0, get_info, 0));
   CHECK(CNET_set_debug_string(EV_DEBUG0, "Info"));
   CHECK(CNET_set_handler(EV_DEBUG1, print_routing_tables, 0));
   CHECK(CNET_set_debug_string(EV_DEBUG1, "Routes"));

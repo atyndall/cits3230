@@ -5,7 +5,7 @@
 #include <string.h>
 
 /// Prints info about link
-EVENT_HANDLER(info)
+EVENT_HANDLER(get_info)
 {
   printf("\nINFORMATION\n");
   printf("  Node address: %d\n", nodeinfo.address);
