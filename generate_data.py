@@ -6,7 +6,7 @@ import multiprocessing
 import random
 import sys
 
-CNET_PATH = 'cnet'
+CNET_PATH = './cnet-exe'
 
 seeds = [
   569830,
@@ -31,6 +31,7 @@ losses = [
 ]
 
 headers = [
+  'seed', 'rate', 'corrupt', 'loss', 'execstatus', 'execout',
   'Simulation time',
   'Events raised',
   'API errors',
@@ -48,7 +49,7 @@ headers = [
   'Transmission cost',
 ]
 
-runtime = '100us'
+runtime = '12s'
 
 resreg = re.compile("(.*)\s*:\s*(.*)")
 
@@ -92,16 +93,18 @@ def compute(data):
     f.write(out)
   
   try:
-    res = check_output([CNET_PATH, '-z', '-W', '-g', '-m', str(60), '-S', str(seed), '-e', str(runtime), randname])
+    res = check_output([CNET_PATH, '-z', '-W', '-g', '-m', str(60 * 3), '-S', str(seed), '-e', str(runtime), randname])
   except subprocess.CalledProcessError as e:
     print "TERMINATED: cnet with s=%d, r=%s, c=%d, l=%d" % (seed, rate, corrupt, loss)
     print e.output
-    return []
+    sys.stdout.flush()
+    return [seed, rate, corrupt, loss, 'failure', e.output]
   
   print "COMPLETE: cnet with s=%d, r=%s, c=%d, l=%d" % (seed, rate, corrupt, loss)
   sys.stdout.flush()
   
-  csvline = []
+  csvline = [seed, rate, corrupt, loss, 'success', res]
+  
   for line in res.split('\n')[1:16]:
     r = resreg.search(line)
     csvline.append(r.groups()[1])
