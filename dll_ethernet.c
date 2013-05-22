@@ -251,10 +251,10 @@ void dll_eth_read(struct dll_eth_state *state,
                   const char *data,
                   size_t length)
 {
-  // printf("Ethernet: read frame of length %zd.\n", length);
+  printf("Ethernet: read frame of length %zd.\n", length);
   
   if (length > sizeof(struct eth_frame)) {
-    // printf("\tFrame is too large!\n");
+    printf("\tFrame is too large!\n");
     return;
   }
   

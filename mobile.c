@@ -10,6 +10,7 @@
 #include "mapping.h"
 #include "network.h"
 #include "walking.h"
+#include "helpers.h"
 
 #define NL_WINDOW_SIZE (20)
 #define MAX_DESTINATIONS (20)
@@ -139,6 +140,21 @@ static EVENT_HANDLER(physical_ready)
   dll_wifi_read(dll_states[link], frame, length);
 
   printf("physical_ready RETURN\n");
+}
+
+EVENT_HANDLER(print_association)
+{
+  for (int link = 0; link <= nodeinfo.nlinks; ++link) {
+    if (linkinfo[link].linktype == LT_WLAN) {
+      if (dll_states[link] != NULL && dll_states[link]->assoc_record.valid) {
+        char mac[17];
+        CNET_format_nicaddr(mac, dll_states[link]->assoc_record.associated_ap);
+        printf("%s currently associated with MAC %s\n", linkinfo[link].linkname, mac);
+      } else {
+        printf("%s not currently associated\n", linkinfo[link].linkname);
+      }
+    }
+  }
 }
 
 
@@ -720,6 +736,10 @@ void reboot_mobile()
   CHECK(CNET_set_handler(WIFI_REASSOCIATE_TIMER, reassociate, -1));
   CHECK(CNET_set_handler(WIFI_BACKOFF_TIMER, mobile_wifi_backon, -1));
   CHECK(CNET_set_handler(NL_RESEND_WINDOW_TIMER, resend_window, -1));
+  CHECK(CNET_set_handler(EV_DEBUG0, info, -1));
+  CHECK(CNET_set_debug_string(EV_DEBUG0, "Info"));
+  CHECK(CNET_set_handler(EV_DEBUG1, print_association, -1));
+  CHECK(CNET_set_debug_string(EV_DEBUG1, "Assoc"));
 
   // Initialize mobility.
   // TODO

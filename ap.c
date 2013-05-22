@@ -10,6 +10,7 @@
 #include "dll_wifi.h"
 #include "mapping.h"
 #include "network.h"
+#include "helpers.h"
 
 #define WIFI_BUFFER_LENGTH (100)
 
@@ -103,9 +104,8 @@ void print_routing_table(int link)
 {
   if(dll_states[link].type != DLL_ETHERNET) { return; }
   
-  printf("\n------------------- ROUTING TABLE -------------------\n");
+  printf("\n---------------- %s ROUTING TABLE -----------------\n", linkinfo[link].linkname);
   printf("MOBILE MAC           AP MAC               MOBILE ADDR\n");
-  printf("-----------------------------------------------------\n");
   
   int j;
   for(j = 0; j < ROUTING_TABLE_ROWS; j++)
@@ -123,6 +123,36 @@ void print_routing_table(int link)
     printf("%s    %s    %i\n", mobile_nic_string, ap_nic_string, mobile_num_addr);
   }
   printf("-----------------------------------------------------\n\n");
+}
+
+EVENT_HANDLER(print_routing_tables)
+{
+  for (int link = 0; link <= nodeinfo.nlinks; ++link) {
+    print_routing_table(link);
+  }
+}
+
+EVENT_HANDLER(print_associated_nodes)
+{
+  printf("\nASSOCIATIONS\n");
+  for (int link = 0; link <= nodeinfo.nlinks; ++link) {
+    if(dll_states[link].type == DLL_WIFI) {
+      printf("  %s\n", linkinfo[link].linkname);
+      int asci = 0;
+      for (int assc = 0; assc <= WIFI_MAX_ASSOCIATED_CLIENTS; ++assc) {
+        struct wifi_ap_assoc_record r = dll_states[link].data.wifi->assoc_records[assc];
+        if (r.valid) {
+          char mac[17];
+          CNET_format_nicaddr(mac, r.associated_client);
+          printf("    MAC: %s, addr: %d, time: %d\n", mac, r.client_node_number, r.association_time);
+          asci++;
+        }
+      }
+      if (asci == 0) {
+        printf("    None\n");
+      }
+    }
+  }
 }
 
 // print the contents of a routing info packet to this node's output stream
@@ -633,6 +663,13 @@ void reboot_accesspoint()
   CHECK(CNET_set_handler(ETHER_BACKOFF_TIMER, ap_ether_backon, -1));
   CHECK(CNET_set_handler(ETHER_CARRIER_SENSE_TIMER, ap_ether_sense, -1));
   CHECK(CNET_set_handler(EV_FRAMECOLLISION, ap_handle_collision, -1));
+  CHECK(CNET_set_handler(EV_DEBUG0, info, -1));
+  CHECK(CNET_set_debug_string(EV_DEBUG0, "Info"));
+  CHECK(CNET_set_handler(EV_DEBUG1, print_routing_tables, -1));
+  CHECK(CNET_set_debug_string(EV_DEBUG1, "Routes"));
+  CHECK(CNET_set_handler(EV_DEBUG2, print_associated_nodes, -1));
+  CHECK(CNET_set_debug_string(EV_DEBUG2, "Assoc"));
+  
  
   // printf("reboot_accesspoint() complete.\n");
 }

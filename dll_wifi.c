@@ -58,10 +58,7 @@ struct dll_wifi_state *dll_wifi_new_state(int link,
     state->frame_queue.active[i] = false;
   }
 
-  // print this node's NIC address for diagnostic purposes
-  char my_nicaddr_string[17];
-  CNET_format_nicaddr(my_nicaddr_string, linkinfo[link].nicaddr);
-  printf("WIFI: init complete for MAC: %s\n", my_nicaddr_string);
+  printf("WIFI: init complete\n");
   
   return state;
 }

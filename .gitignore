@@ -21,3 +21,4 @@ debug*
 out.csv
 PROJECT_CURR
 badtrace
+*.cnet
