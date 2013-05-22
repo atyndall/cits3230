@@ -81,8 +81,10 @@ def check_output(*popenargs, **kwargs):
   
 def compute(data):
   global template
-  seed, rate, corrupt, loss = data
-  print "RUNNING: cnet with s=%d, r=%s, c=%d, l=%d" % (seed, rate, corrupt, loss)
+  i, data2 = data
+  seed, rate, corrupt, loss = data2
+  time.sleep(i*2) # Hopefully avoid startup collisions now
+  print "RUNNING: cnet %d with s=%d, r=%s, c=%d, l=%d" % (i, seed, rate, corrupt, loss)
   sys.stdout.flush()
 
   randname = '%d.project' % random.randint(0, 99999)
@@ -124,7 +126,7 @@ with open('out.csv', 'wb') as csvf:
   
   products = itertools.product(seeds, rates, corruptions, losses)
 
-  for result in pool.imap_unordered(compute, products):
+  for result in pool.imap_unordered(compute, enumerate(products)):
     csv.writerow(result)
     csvf.flush()
     
