@@ -80,13 +80,13 @@ void eth_queue_frame(struct dll_eth_state *state, struct eth_frame *frame, bool 
       queue->active[i] = true;
       queue->send_attempts[i] = 0;
       
-      printf("ETH: queued frame at index %i, head: %i\n", i, queue->head);
+      //printf("ETH: queued frame at index %i, head: %i\n", i, queue->head);
       
       dll_eth_carrier_sense(state);
       return;
     }
   }
-  printf("ETH ERROR: too many frames to fit in ethernet output queue\n");
+  //printf("ETH ERROR: too many frames to fit in ethernet output queue\n");
 }
 
 // Called when this DLL is not backed off, and the channel has been sensed
@@ -104,7 +104,7 @@ void dll_eth_send_next_frame(struct dll_eth_state *state)
   }
   
   if(!state->resend_frame && queue->send_attempts[queue->head] > 0) {
-    printf("advancing head of queue to index %i; sent_attempts: %i\n", (queue->head + 1) % ETHER_QUEUE_LENGTH, queue->send_attempts[queue->head]);
+    //printf("advancing head of queue to index %i; sent_attempts: %i\n", (queue->head + 1) % ETHER_QUEUE_LENGTH, queue->send_attempts[queue->head]);
     queue->active[queue->head] = false;
     queue->send_attempts[queue->head] = 0;
     queue->head = (queue->head + 1) % ETHER_QUEUE_LENGTH;
@@ -113,7 +113,7 @@ void dll_eth_send_next_frame(struct dll_eth_state *state)
   state->resend_frame = false;
   
   if(!queue->active[queue->head]) { 
-    printf("ETH: no frames in queue\n");
+    //printf("ETH: no frames in queue\n");
     return;   
   }
   
@@ -123,7 +123,7 @@ void dll_eth_send_next_frame(struct dll_eth_state *state)
   memcpy(&data_len, queue->frame_queue[queue->head].type, sizeof(data_len));
   size_t length = data_len + ETH_HEADER_LENGTH;
 
-  printf("ETH: attempting to send frame\n");
+  //printf("ETH: attempting to send frame\n");
   CHECK(CNET_write_physical(state->link, (char *)&(queue->frame_queue[queue->head]), &length));
 
   dll_eth_carrier_sense(state);
@@ -133,7 +133,7 @@ void dll_eth_send_next_frame(struct dll_eth_state *state)
 // and places this DLL into back-off mode
 void dll_eth_handle_collision(struct dll_eth_state *state)
 {
-  printf("ETH: collision\n");
+  //printf("ETH: collision\n");
 
   state->backed_off = true;
   state->resend_frame = true;
@@ -158,7 +158,7 @@ void dll_eth_handle_collision(struct dll_eth_state *state)
     queue->active[queue->head] = false;
     queue->send_attempts[queue->head] = 0;
     queue->head = (queue->head + 1) % ETHER_QUEUE_LENGTH;
-    printf("ETH ERROR: too many frame retransmission attempts, dropped\n");
+    //printf("ETH ERROR: too many frame retransmission attempts, dropped\n");
     return;
   }
 
@@ -166,7 +166,7 @@ void dll_eth_handle_collision(struct dll_eth_state *state)
   
   queue->send_attempts[queue->head]++;
   
-  printf("ETH: starting backoff timer, wait: %i, link: %i\n", ((CnetTime)(wait_slots*ETHER_SLOT_TIME)), (int)(state->link));
+  //printf("ETH: starting backoff timer, wait: %i, link: %i\n", ((CnetTime)(wait_slots*ETHER_SLOT_TIME)), (int)(state->link));
 
   if(wait_slots == 0) 
   {
@@ -185,14 +185,14 @@ void dll_eth_carrier_sense(struct dll_eth_state *state)
   {
     dll_eth_send_next_frame(state);
   } else {
-    printf("ETH: not sending yet, carrier: %i, backed_off: %i\n", CNET_carrier_sense(state->link), (int)state->backed_off);
+    //printf("ETH: not sending yet, carrier: %i, backed_off: %i\n", CNET_carrier_sense(state->link), (int)state->backed_off);
   }
   
   if((state->priority_queue.active[state->priority_queue.head] || state->data_queue.active[state->data_queue.head]) && !state->backed_off)
   {
     CNET_start_timer(ETHER_CARRIER_SENSE_TIMER, (CnetTime)ETHER_CARRIER_SENSE_TIME, state->link);
   } else {
-    printf("ETH: not starting timer, backed_off: %i\n", (int)state->backed_off);
+    //printf("ETH: not starting timer, backed_off: %i\n", (int)state->backed_off);
   }
 }
 
@@ -234,7 +234,7 @@ void dll_eth_write(struct dll_eth_state *state,
 
   char dest_nicaddr_string[17];
   CNET_format_nicaddr(dest_nicaddr_string, frame.dest);
-  printf("ETH: queuing frame for dest MAC: %s\n", dest_nicaddr_string);
+  //printf("ETH: queuing frame for dest MAC: %s\n", dest_nicaddr_string);
   
   eth_queue_frame(state, &frame, priority);
   
@@ -251,10 +251,10 @@ void dll_eth_read(struct dll_eth_state *state,
                   const char *data,
                   size_t length)
 {
-  printf("Ethernet: read frame of length %zd.\n", length);
+  //printf("Ethernet: read frame of length %zd.\n", length);
   
   if (length > sizeof(struct eth_frame)) {
-    printf("\tFrame is too large!\n");
+    //printf("\tFrame is too large!\n");
     return;
   }
   
@@ -274,7 +274,7 @@ void dll_eth_read(struct dll_eth_state *state,
   
   if(strcmp(frame_dest_string, my_nicaddr_string) != 0 && strcmp(frame_dest_string, ETHER_BROADCAST_ADDR_STRING) != 0) { return; }
   
-  printf("ETH: got frame addressed to this node\n");
+  //printf("ETH: got frame addressed to this node\n");
   
   // Send the frame up to the next layer.
   if (state->nl_callback)

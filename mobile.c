@@ -119,7 +119,7 @@ static struct dll_wifi_state **dll_states;
 ///
 static EVENT_HANDLER(physical_ready)
 {
-  printf("physical_ready\n");
+  //printf("physical_ready\n");
 
   // First we read the frame from the physical layer.
   char frame[DLL_MTU];
@@ -129,17 +129,17 @@ static EVENT_HANDLER(physical_ready)
   CHECK(CNET_read_physical(&link, frame, &length));
 
   // Now we forward this information to the data link layer, if it exists.
-  // printf("link: %d\n", link);
-  // printf("nodeinfo.nlinks: %d\n", nodeinfo.nlinks);
-  // printf("dll_states[link]: %p\n", dll_states[link]);
+  // //printf("link: %d\n", link);
+  // //printf("nodeinfo.nlinks: %d\n", nodeinfo.nlinks);
+  // //printf("dll_states[link]: %p\n", dll_states[link]);
   if (link > nodeinfo.nlinks || dll_states[link] == NULL) {
-    printf("Physical layer has no DLL, not continuing");
+    //printf("Physical layer has no DLL, not continuing");
     return;
   }
   
   dll_wifi_read(dll_states[link], frame, length);
 
-  printf("physical_ready RETURN\n");
+  //printf("physical_ready RETURN\n");
 }
 
 EVENT_HANDLER(print_association)
@@ -149,9 +149,9 @@ EVENT_HANDLER(print_association)
       if (dll_states[link] != NULL && dll_states[link]->assoc_record.valid) {
         char mac[17];
         CNET_format_nicaddr(mac, dll_states[link]->assoc_record.associated_ap);
-        printf("%s currently associated with MAC %s\n", linkinfo[link].linkname, mac);
+        //printf("%s currently associated with MAC %s\n", linkinfo[link].linkname, mac);
       } else {
-        printf("%s not currently associated\n", linkinfo[link].linkname);
+        //printf("%s not currently associated\n", linkinfo[link].linkname);
       }
     }
   }
@@ -159,22 +159,22 @@ EVENT_HANDLER(print_association)
 
 EVENT_HANDLER(print_ap_records)
 {
-  printf("\nAP RECORDS\n");
+  //printf("\nAP RECORDS\n");
   for (int link = 0; link <= nodeinfo.nlinks; ++link) {
     if (linkinfo[link].linktype == LT_WLAN) {
-      printf("  %s\n", linkinfo[link].linkname);
+      //printf("  %s\n", linkinfo[link].linkname);
       int asci = 0;
       for (int assc = 0; assc <= WIFI_MAX_AP_RECORDS; ++assc) {
         struct wifi_ap_record r = dll_states[link]->ap_record_table[assc];
         if (r.up_to_date) {
           char mac[17];
           CNET_format_nicaddr(mac, r.ap_nic_addr);
-          printf("    MAC: %s, RTT: %d, Strength: %f\n", mac, r.latest_rtt, r.latest_sig_strength);
+          //printf("    MAC: %s, RTT: %d, Strength: %f\n", mac, r.latest_rtt, r.latest_sig_strength);
           asci++;
         }
       }
       if (asci == 0) {
-        printf("    None\n");
+        //printf("    None\n");
       }
     }
   }
@@ -193,7 +193,7 @@ void check_dll_ready()
 //add a sending queue to the end of the list of queues to deal with when the DLL is ready
 void add_queue_to_out_queue(struct send_queue *queue_to_add)
 {
-  printf("adding queue to out_list\n");
+  //printf("adding queue to out_list\n");
 
   int i;
   int first_inactive_index = 0;
@@ -213,7 +213,7 @@ void add_queue_to_out_queue(struct send_queue *queue_to_add)
     out_queue.queue[first_inactive_index] = *queue_to_add;
     out_queue.entry_active[first_inactive_index] = true;
   } else {
-    printf("MOBILE ERROR: out_queue full\n");
+    //printf("MOBILE ERROR: out_queue full\n");
     return;
   }
 }
@@ -239,7 +239,7 @@ void add_queue_to_resend_queue(struct send_queue *queue_to_add)
     resend_queue.queue[first_inactive_index] = *queue_to_add;
     resend_queue.entry_active[first_inactive_index] = true;
   } else {
-    printf("MOBILE ERROR: resend_queue full\n");
+    //printf("MOBILE ERROR: resend_queue full\n");
     return;
   }
   
@@ -269,7 +269,7 @@ EVENT_HANDLER(resend_window)
 /// Caled when a DLL is ready to accept a packet; determines the next packet to send and passes it to that DLL for transmission
 static void dll_ready(int link) 
 {
-  printf("dll_ready\n");
+  //printf("dll_ready\n");
 
   //deal with the ack queue before handling the packet output queue
   if(ack_queue.entry_active[ack_queue.head])
@@ -281,7 +281,7 @@ static void dll_ready(int link)
     uint16_t packet_length = NL_PACKET_LENGTH(packet);
   
     //finally, actually pass the packet to the DLL that claimed to be ready to accept it
-    printf("sending ACK on link %i for node %i\n", link, packet.dest);
+    //printf("sending ACK on link %i for node %i\n", link, packet.dest);
     dll_wifi_write(dll_states[link], dll_states[link]->assoc_record.associated_ap, (char *)&packet, packet_length);
     
     check_dll_ready();
@@ -313,7 +313,7 @@ static void dll_ready(int link)
       // all packets in the send window have been sent,
       // so, wait a while, then add this queue back onto
       // the output list and transmit the window again
-      printf("MOBILE: resending queue\n");
+      //printf("MOBILE: resending queue\n");
       add_queue_to_resend_queue(&send_queue);
     }
 
@@ -328,16 +328,16 @@ static void dll_ready(int link)
       uint16_t packet_length = NL_PACKET_LENGTH(packet);
   
       //finally, actually pass the packet to the DLL that claimed to be ready to accept it
-      printf("MOBILE: sending packet on link %i for node %i with seqno: %i\n", link, packet.dest, packet.seq_no);
+      //printf("MOBILE: sending packet on link %i for node %i with seqno: %i\n", link, packet.dest, packet.seq_no);
       
       dll_wifi_write(dll_states[link], dll_states[link]->assoc_record.associated_ap, (char *)&packet, packet_length);
     }
     check_dll_ready();	
   } else {
-    printf("MOBILE: currently no queued data packets\n");
+    //printf("MOBILE: currently no queued data packets\n");
   }
 
-  printf("dll_ready RETURN\n");
+  //printf("dll_ready RETURN\n");
 }
 
 // examines the specified receiving queue for new in-order packets that have not yet been sent to the app layer,
@@ -345,7 +345,7 @@ static void dll_ready(int link)
 // first un-acked packet in the queue
 void refresh_recv_queue(struct recv_queue *recv_queue)
 {
-  printf("refresh_recv_queue\n");
+  //printf("refresh_recv_queue\n");
   int i;
   for(i = recv_queue->window_start; i < recv_queue->window_start + NL_WINDOW_SIZE; i++)
   {
@@ -358,7 +358,7 @@ void refresh_recv_queue(struct recv_queue *recv_queue)
         size_t payload_length = recv_queue->packets[i % (2 * NL_WINDOW_SIZE)].length;
         CHECK(CNET_write_application(&(recv_queue->packets[i % (2 * NL_WINDOW_SIZE)].data), &payload_length));
         
-        printf("MOBILE: sent data to application layer from node: %i\n", recv_queue->send_addr);
+        //printf("MOBILE: sent data to application layer from node: %i\n", recv_queue->send_addr);
       }
     } 
     else 
@@ -374,7 +374,7 @@ void refresh_recv_queue(struct recv_queue *recv_queue)
 // to accept a new packet for transmission
 void ack_packet(struct recv_queue *recv_queue, int seq_no)
 {
-  printf("ack_packet\n");
+  //printf("ack_packet\n");
 
   refresh_recv_queue(recv_queue);
 
@@ -410,7 +410,7 @@ void ack_packet(struct recv_queue *recv_queue, int seq_no)
 
   if(!found_inactive)
   {
-    printf("MOBILE ERROR: no room in ack queue\n");
+    //printf("MOBILE ERROR: no room in ack queue\n");
     return;
   }
 
@@ -423,10 +423,10 @@ void ack_packet(struct recv_queue *recv_queue, int seq_no)
 // Called when we receive data from one of our data link layers, and handles the packet.
 void up_from_dll(int link, const char *data, size_t length)
 {
-  printf("up_from_dll\n");
+  //printf("up_from_dll\n");
 
   if (length > sizeof(struct nl_packet)) {
-    printf("MOBILE ERROR: %zu is larger than a nl_packet! ignoring.\n", length);
+    //printf("MOBILE ERROR: %zu is larger than a nl_packet! ignoring.\n", length);
     return;
   }
   
@@ -435,21 +435,21 @@ void up_from_dll(int link, const char *data, size_t length)
   memset(&packet, 0, sizeof(packet));
   memcpy(&packet, data, length);
   
-  printf("MOBILE: Received packet from dll on link %d from node %" PRId32
+  //printf("MOBILE: Received packet from dll on link %d from node %" PRId32
          " for node %" PRId32 " with seqno: %i.\n", link, packet.src, packet.dest, packet.seq_no);
   
   uint32_t checksum = packet.checksum;
   packet.checksum = 0;
   
   if (CNET_crc32((unsigned char *)&packet, sizeof(packet)) != checksum) {
-    printf("\tChecksum failed.\n");
+    //printf("\tChecksum failed.\n");
     return;
   }
 
   packet.checksum = checksum;
   
   if (packet.dest != nodeinfo.address) {
-    printf("\tThat's not for me.\n");
+    //printf("\tThat's not for me.\n");
     return;
   }
     
@@ -481,11 +481,11 @@ void up_from_dll(int link, const char *data, size_t length)
       }
     }
 
-    printf("creating new recv_queue for sender %i, with index %i\n", packet.src, recv_queue_index);
+    //printf("creating new recv_queue for sender %i, with index %i\n", packet.src, recv_queue_index);
 
     if(!found_inactive)
     {
-      printf("MOBILE ERROR: too many senders");
+      //printf("MOBILE ERROR: too many senders");
       return;
     }
 
@@ -513,7 +513,7 @@ void up_from_dll(int link, const char *data, size_t length)
 
   ack_packet(&(recv_queue_list[recv_queue_index]), packet.seq_no);
 
-  printf("up_from_dll RETURN\n");
+  //printf("up_from_dll RETURN\n");
 }
 
 // place an outgoing packet on the correct sending queue for that destination,
@@ -521,9 +521,9 @@ void up_from_dll(int link, const char *data, size_t length)
 // asks the DLL to report whether it is ready to accept a packet
 void queue_packet(CnetAddr dest, struct nl_packet *packet) 
 {
-  printf("queue_packet\n");
+  //printf("queue_packet\n");
   
-  printf("queueing packet for node: %i\n", packet->dest);
+  //printf("queueing packet for node: %i\n", packet->dest);
 
   // see if there exists a queue for this destination
   bool found = false;
@@ -545,7 +545,7 @@ void queue_packet(CnetAddr dest, struct nl_packet *packet)
   // if no queue exists for this destination address, make one and add it to the list
   if(!found)
   {
-    printf("No queue for this destination, creating...\n");
+    //printf("No queue for this destination, creating...\n");
     struct send_queue new_queue;
     new_queue.queue_active = true;
     new_queue.window_start = 0;
@@ -571,12 +571,12 @@ void queue_packet(CnetAddr dest, struct nl_packet *packet)
       send_queue_list[i] = new_queue;
       dest_queue_index = i;
     } else {
-      printf("MOBILE ERROR: too many output destinations on this node\n"); 
+      //printf("MOBILE ERROR: too many output destinations on this node\n"); 
       return;
     }
   }
   
-  printf("adding packet to queue\n");
+  //printf("adding packet to queue\n");
   //add the packet to the end of the corresponding destination queue
   first_inactive_index = 0;
   found_inactive = false;
@@ -602,7 +602,7 @@ void queue_packet(CnetAddr dest, struct nl_packet *packet)
     send_queue_list[dest_queue_index].packet_active[first_inactive_index] = true;
     send_queue_list[dest_queue_index].packet_acked[first_inactive_index] = false;
   } else {
-    printf("MOBILE ERROR: too many output packets for this destination on this node\n");
+    //printf("MOBILE ERROR: too many output packets for this destination on this node\n");
     return;
   }
   
@@ -610,7 +610,7 @@ void queue_packet(CnetAddr dest, struct nl_packet *packet)
 
   check_dll_ready();
 
-  printf("queue_packet RETURN\n");
+  //printf("queue_packet RETURN\n");
 }
 
 // Called when this mobile node's application layer has generated a new
@@ -618,7 +618,7 @@ void queue_packet(CnetAddr dest, struct nl_packet *packet)
 // passed to the DLL
 EVENT_HANDLER(application_ready)
 {
-  printf("application_ready\n");
+  //printf("application_ready\n");
 
   struct nl_packet packet = (struct nl_packet){
     .src = nodeinfo.address,
@@ -633,18 +633,18 @@ EVENT_HANDLER(application_ready)
   packet.checksum = 0;
   packet.checksum = CNET_crc32((unsigned char *)&packet, sizeof(packet));
   
-  printf("MOBILE: Generated message for % " PRId32 ". Queueing...\n",
+  //printf("MOBILE: Generated message for % " PRId32 ". Queueing...\n",
          packet.dest);
 
   queue_packet(packet.dest, (struct nl_packet *)&packet);
 
-  printf("application_ready RETURN\n");
+  //printf("application_ready RETURN\n");
 }
 
 // tell all WLAN DLLs to probe for APs; called regularly by a timer
 EVENT_HANDLER(send_probe)
 {
-   printf("send_probe\n");
+   //printf("send_probe\n");
 
    for (int link = 1; link <= nodeinfo.nlinks; ++link) {
      if (linkinfo[link].linktype == LT_WLAN) {
@@ -654,24 +654,14 @@ EVENT_HANDLER(send_probe)
   CNET_start_timer(WIFI_PROBE_TIMER, (CnetTime)WIFI_PROBE_PERIOD, 0);
   CNET_start_timer(WIFI_REASSOCIATE_TIMER, (CnetTime)WIFI_REASSOCIATE_PERIOD, 0);
 
-  printf("send_probe RETURN\n");
+  //printf("send_probe RETURN\n");
 }
 
 // called some time after a WLAN probe is sent, and instructs the Wifi DLL
 // to associate with the best AP, given the probe responses
 EVENT_HANDLER(reassociate)
 {
-  printf("reassociate\n");
-  printf("##############################\n");
-  printf("##############################\n");
-  printf("##############################\n");
-  printf("##############################\n");
-  printf("##############################\n");
-  printf("##############################\n");
-  printf("##############################\n");
-  printf("##############################\n");
-  printf("##############################\n");
-  printf("##############################\n");
+  //printf("reassociate\n");
 
   for (int link = 1; link <= nodeinfo.nlinks; ++link) {
     if (linkinfo[link].linktype == LT_WLAN) {
@@ -679,7 +669,7 @@ EVENT_HANDLER(reassociate)
     }
   }
 
-  printf("reassociate RETURN\n");
+  //printf("reassociate RETURN\n");
 }
 
 /// called when the WLAN backoff timer expires, and the Wifi NIC can
@@ -783,6 +773,6 @@ void reboot_mobile()
   // Start the applicaton layer
   CNET_enable_application(ALLNODES);
   
-  printf("reboot_mobile() complete.\n");
-  printf("Address of this node: %" PRId32 ".\n", nodeinfo.address);
+  //printf("reboot_mobile() complete.\n");
+  //printf("Address of this node: %" PRId32 ".\n", nodeinfo.address);
 }
