@@ -7,29 +7,36 @@ import random
 import sys
 import time
 
-CNET_PATH = './cnet-exe'
+CNET_PATH = 'cnet'
 
+# Random number seeds to test
 seeds = [
   569830,
 ]
 
+# Message rates to test
 rates = [
   '10000us',  # 0.01 seconds
   '100000us', # 0.1  seconds
   '500000us', # 0.5  seconds
 ]
 
+# Corruption rates to test
 corruptions = [
   0,
   3,
   12,
 ]
 
+# Loss rates to test
 losses = [
   0,
   3,
   12,
 ]
+
+# Simulation runtime
+runtime = '12s'
 
 headers = [
   'seed', 'rate', 'corrupt', 'loss', 'execstatus', 'execout', 'exectime',
@@ -49,8 +56,6 @@ headers = [
   'Efficiency (bytes AL) / (bytes PL)',
   'Transmission cost',
 ]
-
-runtime = '12s'
 
 resreg = re.compile("(.*)\s*:\s*(.*)")
 
