@@ -1,3 +1,4 @@
+# Requires Python 2.6.6 or above
 import subprocess
 import itertools
 import csv
