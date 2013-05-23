@@ -149,9 +149,9 @@ EVENT_HANDLER(print_association)
       if (dll_states[link] != NULL && dll_states[link]->assoc_record.valid) {
         char mac[17];
         CNET_format_nicaddr(mac, dll_states[link]->assoc_record.associated_ap);
-        //printf("%s currently associated with MAC %s\n", linkinfo[link].linkname, mac);
+        printf("%s currently associated with MAC %s\n", linkinfo[link].linkname, mac);
       } else {
-        //printf("%s not currently associated\n", linkinfo[link].linkname);
+        printf("%s not currently associated\n", linkinfo[link].linkname);
       }
     }
   }
@@ -159,22 +159,22 @@ EVENT_HANDLER(print_association)
 
 EVENT_HANDLER(print_ap_records)
 {
-  //printf("\nAP RECORDS\n");
+  printf("\nAP RECORDS\n");
   for (int link = 0; link <= nodeinfo.nlinks; ++link) {
     if (linkinfo[link].linktype == LT_WLAN) {
-      //printf("  %s\n", linkinfo[link].linkname);
+      printf("  %s\n", linkinfo[link].linkname);
       int asci = 0;
       for (int assc = 0; assc <= WIFI_MAX_AP_RECORDS; ++assc) {
         struct wifi_ap_record r = dll_states[link]->ap_record_table[assc];
         if (r.up_to_date) {
           char mac[17];
           CNET_format_nicaddr(mac, r.ap_nic_addr);
-          //printf("    MAC: %s, RTT: %d, Strength: %f\n", mac, r.latest_rtt, r.latest_sig_strength);
+          printf("    MAC: %s, RTT: %d, Strength: %f\n", mac, r.latest_rtt, r.latest_sig_strength);
           asci++;
         }
       }
       if (asci == 0) {
-        //printf("    None\n");
+        printf("    None\n");
       }
     }
   }
@@ -358,7 +358,7 @@ void refresh_recv_queue(struct recv_queue *recv_queue)
         size_t payload_length = recv_queue->packets[i % (2 * NL_WINDOW_SIZE)].length;
         CHECK(CNET_write_application(&(recv_queue->packets[i % (2 * NL_WINDOW_SIZE)].data), &payload_length));
         
-        //printf("MOBILE: sent data to application layer from node: %i\n", recv_queue->send_addr);
+        printf("MOBILE: sent data to application layer from node: %i\n", recv_queue->send_addr);
       }
     } 
     else 
