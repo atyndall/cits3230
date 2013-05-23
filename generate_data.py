@@ -14,21 +14,19 @@ seeds = [
 ]
 
 rates = [
-  '10000us',  # 0.01 seconds
   '100000us', # 0.1  seconds
-  '500000us', # 0.5  seconds
+  '300000us', # 0.3  seconds
+  '1000000us', # 1  seconds
 ]
 
 corruptions = [
   0,
   3,
-  12,
 ]
 
 losses = [
   0,
   3,
-  12,
 ]
 
 headers = [
@@ -50,7 +48,9 @@ headers = [
   'Transmission cost',
 ]
 
-runtime = '12s'
+runtime = '15s'
+
+max_minutes = 60 * 24 # 24 hours
 
 resreg = re.compile("(.*)\s*:\s*(.*)")
 
@@ -97,16 +97,18 @@ def compute(data):
   
   start_time = time.time()
   try:
-    res = check_output([CNET_PATH, '-z', '-W', '-g', '-q', '-m', str(60 * 24), '-S', str(seed), '-e', str(runtime), randname])
+    params = [CNET_PATH, '-z', '-W', '-g', '-q', '-m', str(max_minutes), '-S', str(seed), '-e', str(runtime), randname]
+    print params
+    res = check_output(params)
   except subprocess.CalledProcessError as e:
-    print "TERMINATED: cnet with s=%d, r=%s, c=%d, l=%d" % (seed, rate, corrupt, loss)
+    print "TERMINATED: cnet %d with s=%d, r=%s, c=%d, l=%d" % (i, seed, rate, corrupt, loss)
     print e.output
     sys.stdout.flush()
     end_time = time.time()
     return [seed, rate, corrupt, loss, 'failure', e.output, (end_time - start_time)]
     
   end_time = time.time()
-  print "COMPLETE: cnet with s=%d, r=%s, c=%d, l=%d" % (seed, rate, corrupt, loss)
+  print "COMPLETE: cnet %d with s=%d, r=%s, c=%d, l=%d" % (i, seed, rate, corrupt, loss)
   sys.stdout.flush()
   
   csvline = [seed, rate, corrupt, loss, 'success', res, (end_time - start_time)]
