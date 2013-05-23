@@ -6,7 +6,6 @@ rebootargs	= "csse2nd.map"
 tracefile	= "badtrace"
 
 messagerate = %MESSAGERATE%
-
 minmessagesize = 100bytes
 maxmessagesize = 1024bytes
 
@@ -19,10 +18,9 @@ icontitle	= "%n"
 
 
 lansegment CSSE {
-  lan-bandwidth = 1000Mbps
   lan-probframecorrupt = %PROBFRAMECORRUPT%
   lan-probframeloss = %PROBFRAMELOSS%
-  
+
   x=5, y=65
 }
 
@@ -81,23 +79,3 @@ mobile iPod01 { wlan { } }
 mobile iPod02 { wlan { } }
 mobile iPod03 { wlan { } }
 mobile iPod04 { wlan { } }
-
-#if 0
-mobile iPod05 { wlan { } }
-mobile iPod06 { wlan { } }
-mobile iPod07 { wlan { } }
-mobile iPod08 { wlan { } }
-mobile iPod09 { wlan { } }
-
-mobile iPod10 { wlan { } }
-mobile iPod11 { wlan { } }
-mobile iPod12 { wlan { } }
-mobile iPod13 { wlan { } }
-mobile iPod14 { wlan { } }
-
-mobile iPod15 { wlan { } }
-mobile iPod16 { wlan { } }
-mobile iPod17 { wlan { } }
-mobile iPod18 { wlan { } }
-mobile iPod19 { wlan { } }
-#endif

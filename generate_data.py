@@ -7,7 +7,14 @@ import random
 import sys
 import time
 
+## START CONFIG
+
+# Path to cnet executable
 CNET_PATH = 'cnet'
+
+# Number of different cnets to run simultaneously
+# Don't pick a higher number than cores you have, unless you want to cry
+PROCESSES = 10
 
 # Random number seeds to test
 seeds = [
@@ -16,27 +23,30 @@ seeds = [
 
 # Message rates to test
 rates = [
-  '10000us',  # 0.01 seconds
   '100000us', # 0.1  seconds
-  '500000us', # 0.5  seconds
+  '300000us', # 0.3  seconds
+  '1000000us', # 1  seconds
 ]
 
 # Corruption rates to test
 corruptions = [
   0,
   3,
-  12,
 ]
 
 # Loss rates to test
 losses = [
   0,
   3,
-  12,
 ]
 
 # Simulation runtime
 runtime = '12s'
+
+# Maximum wall-clock runtime
+max_minutes = 60 * 24 # 24 hours
+
+## END CONFIG
 
 headers = [
   'seed', 'rate', 'corrupt', 'loss', 'execstatus', 'execout', 'exectime',
@@ -102,16 +112,18 @@ def compute(data):
   
   start_time = time.time()
   try:
-    res = check_output([CNET_PATH, '-z', '-W', '-g', '-q', '-m', str(60 * 24), '-S', str(seed), '-e', str(runtime), randname])
+    params = [CNET_PATH, '-z', '-W', '-g', '-q', '-m', str(max_minutes), '-S', str(seed), '-e', str(runtime), randname]
+    print ' '.join(params)
+    res = check_output(params)
   except subprocess.CalledProcessError as e:
-    print "TERMINATED: cnet with s=%d, r=%s, c=%d, l=%d" % (seed, rate, corrupt, loss)
+    print "TERMINATED: cnet %d with s=%d, r=%s, c=%d, l=%d" % (i, seed, rate, corrupt, loss)
     print e.output
     sys.stdout.flush()
     end_time = time.time()
     return [seed, rate, corrupt, loss, 'failure', e.output, (end_time - start_time)]
     
   end_time = time.time()
-  print "COMPLETE: cnet with s=%d, r=%s, c=%d, l=%d" % (seed, rate, corrupt, loss)
+  print "COMPLETE: cnet %d with s=%d, r=%s, c=%d, l=%d" % (i, seed, rate, corrupt, loss)
   sys.stdout.flush()
   
   csvline = [seed, rate, corrupt, loss, 'success', res, (end_time - start_time)]
@@ -127,7 +139,7 @@ with open('out.csv', 'wb') as csvf:
   csv.writerow(headers)
   csvf.flush()
   
-  pool = multiprocessing.Pool(10) # Use 10 processes
+  pool = multiprocessing.Pool(PROCESSES)
   
   products = itertools.product(seeds, rates, corruptions, losses)
 
