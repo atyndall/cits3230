@@ -13,7 +13,7 @@
 #define WIFI_BROADCAST_ADDR_STRING ("ff:ff:ff:ff:ff:ff")
 #define WIFI_MAX_ASSOCIATED_CLIENTS (100)
 #define WIFI_INITIAL_CHECKSUM_VALUE ((uint32_t)0)
-#define WIFI_APP_LAYER_START_DELAY (2000000)
+#define WIFI_APP_LAYER_START_DELAY (10000000)
 
 #define WIFI_PROBE_PERIOD (500000) //how often to probe for APs
 #define WIFI_REASSOCIATE_PERIOD (1000000) //how long to wait after probing before reassociation
