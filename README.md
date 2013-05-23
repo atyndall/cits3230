@@ -1,6 +1,11 @@
-Computer Networks Project - 24/05/2012
+CITS3230 Computer Networks Project
+========
 
-Authors:
-  Ash Tyndall (20915779)
-  Matthew Atcheson (20520867)
-  David Putz (20964613)
+http://undergraduate.csse.uwa.edu.au/units/CITS3230/project2013/index.html
+
+Completed 24/05/2012.
+
+Written by:
+* Ash Tyndall
+* Matthew Atcheson
+* David Putz
