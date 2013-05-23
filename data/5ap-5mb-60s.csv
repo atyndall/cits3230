@@ -1,0 +1,517 @@
+num,seed,rate,corrupt,loss,execstatus,execout,exectime,Simulation time,Events raised,API errors,Messages generated,Messages delivered,Messages incorrect,Message bandwidth,Average delivery time,Frames transmitted,Frames received,Frames corrupted,Frames lost,Frame collisions,Efficiency (bytes AL) / (bytes PL),Transmission cost
+6,569830,300000us,3,0,success,"0 hosts, 0 routers, 5 mobiles, 5 accesspoints
+Simulation time                     : 60000000
+Events raised                       : 48950
+API errors                          : 0
+Messages generated                  : 677
+Messages delivered                  : 9
+Messages incorrect                  : 0
+Message bandwidth                   : 406
+Average delivery time               : 9999273
+Frames transmitted                  : 11095
+Frames received                     : 35436
+Frames corrupted                    : 203
+Frames lost                         : 0
+Frame collisions                    : 1879
+Efficiency (bytes AL) / (bytes PL)  : 0.42
+Transmission cost                   : 0
+EV_NULL                             : 0
+EV_REBOOT                           : 10
+EV_SHUTDOWN                         : 0
+EV_PHYSICALREADY                    : 35436
+EV_APPLICATIONREADY                 : 677
+EV_KEYBOARDREADY                    : 0
+EV_DRAWFRAME                        : 0
+EV_LINKSTATE                        : 0
+EV_FRAMECOLLISION                   : 637
+EV_PERIODIC                         : 0
+EV_UPDATEGUI                        : 0
+EV_DEBUG0                           : 0
+EV_DEBUG1                           : 0
+EV_DEBUG2                           : 0
+EV_DEBUG3                           : 0
+EV_DEBUG4                           : 0
+EV_TIMER0                           : 0
+EV_TIMER1                           : 0
+EV_TIMER2                           : 600
+EV_TIMER3                           : 590
+EV_TIMER4                           : 8704
+EV_TIMER5                           : 0
+EV_TIMER6                           : 0
+EV_TIMER7                           : 5
+EV_TIMER8                           : 2099
+EV_TIMER9                           : 192
+",3924.4855241775513,60000000,48950,0,677,9,0,406,9999273,11095,35436,203,0,1879,0.42,0
+4,569830,300000us,0,0,success,"0 hosts, 0 routers, 5 mobiles, 5 accesspoints
+Simulation time                     : 60000000
+Events raised                       : 49009
+API errors                          : 0
+Messages generated                  : 677
+Messages delivered                  : 9
+Messages incorrect                  : 0
+Message bandwidth                   : 406
+Average delivery time               : 9999273
+Frames transmitted                  : 11094
+Frames received                     : 35432
+Frames corrupted                    : 0
+Frames lost                         : 0
+Frame collisions                    : 1879
+Efficiency (bytes AL) / (bytes PL)  : 0.42
+Transmission cost                   : 0
+EV_NULL                             : 0
+EV_REBOOT                           : 10
+EV_SHUTDOWN                         : 0
+EV_PHYSICALREADY                    : 35432
+EV_APPLICATIONREADY                 : 677
+EV_KEYBOARDREADY                    : 0
+EV_DRAWFRAME                        : 0
+EV_LINKSTATE                        : 0
+EV_FRAMECOLLISION                   : 637
+EV_PERIODIC                         : 0
+EV_UPDATEGUI                        : 0
+EV_DEBUG0                           : 0
+EV_DEBUG1                           : 0
+EV_DEBUG2                           : 0
+EV_DEBUG3                           : 0
+EV_DEBUG4                           : 0
+EV_TIMER0                           : 0
+EV_TIMER1                           : 0
+EV_TIMER2                           : 600
+EV_TIMER3                           : 590
+EV_TIMER4                           : 8704
+EV_TIMER5                           : 0
+EV_TIMER6                           : 0
+EV_TIMER7                           : 5
+EV_TIMER8                           : 2162
+EV_TIMER9                           : 192
+",3956.5780827999115,60000000,49009,0,677,9,0,406,9999273,11094,35432,0,0,1879,0.42,0
+7,569830,300000us,3,3,success,"0 hosts, 0 routers, 5 mobiles, 5 accesspoints
+Simulation time                     : 60000000
+Events raised                       : 48485
+API errors                          : 0
+Messages generated                  : 677
+Messages delivered                  : 9
+Messages incorrect                  : 0
+Message bandwidth                   : 406
+Average delivery time               : 9999273
+Frames transmitted                  : 11095
+Frames received                     : 35224
+Frames corrupted                    : 177
+Frames lost                         : 53
+Frame collisions                    : 1879
+Efficiency (bytes AL) / (bytes PL)  : 0.42
+Transmission cost                   : 0
+EV_NULL                             : 0
+EV_REBOOT                           : 10
+EV_SHUTDOWN                         : 0
+EV_PHYSICALREADY                    : 35224
+EV_APPLICATIONREADY                 : 677
+EV_KEYBOARDREADY                    : 0
+EV_DRAWFRAME                        : 0
+EV_LINKSTATE                        : 0
+EV_FRAMECOLLISION                   : 637
+EV_PERIODIC                         : 0
+EV_UPDATEGUI                        : 0
+EV_DEBUG0                           : 0
+EV_DEBUG1                           : 0
+EV_DEBUG2                           : 0
+EV_DEBUG3                           : 0
+EV_DEBUG4                           : 0
+EV_TIMER0                           : 0
+EV_TIMER1                           : 0
+EV_TIMER2                           : 600
+EV_TIMER3                           : 590
+EV_TIMER4                           : 8704
+EV_TIMER5                           : 0
+EV_TIMER6                           : 0
+EV_TIMER7                           : 5
+EV_TIMER8                           : 1846
+EV_TIMER9                           : 192
+",3974.3995509147644,60000000,48485,0,677,9,0,406,9999273,11095,35224,177,53,1879,0.42,0
+9,569830,1000000us,0,3,success,"0 hosts, 0 routers, 5 mobiles, 5 accesspoints
+Simulation time                     : 60000000
+Events raised                       : 212597
+API errors                          : 0
+Messages generated                  : 186
+Messages delivered                  : 3
+Messages incorrect                  : 0
+Message bandwidth                   : 305
+Average delivery time               : 13300192
+Frames transmitted                  : 118980
+Frames received                     : 120820
+Frames corrupted                    : 0
+Frames lost                         : 666
+Frame collisions                    : 13507
+Efficiency (bytes AL) / (bytes PL)  : 0.01
+Transmission cost                   : 0
+EV_NULL                             : 0
+EV_REBOOT                           : 10
+EV_SHUTDOWN                         : 0
+EV_PHYSICALREADY                    : 120820
+EV_APPLICATIONREADY                 : 186
+EV_KEYBOARDREADY                    : 0
+EV_DRAWFRAME                        : 0
+EV_LINKSTATE                        : 0
+EV_FRAMECOLLISION                   : 8515
+EV_PERIODIC                         : 0
+EV_UPDATEGUI                        : 0
+EV_DEBUG0                           : 0
+EV_DEBUG1                           : 0
+EV_DEBUG2                           : 0
+EV_DEBUG3                           : 0
+EV_DEBUG4                           : 0
+EV_TIMER0                           : 0
+EV_TIMER1                           : 0
+EV_TIMER2                           : 600
+EV_TIMER3                           : 590
+EV_TIMER4                           : 56337
+EV_TIMER5                           : 0
+EV_TIMER6                           : 236
+EV_TIMER7                           : 5
+EV_TIMER8                           : 25106
+EV_TIMER9                           : 192
+",7950.596065998077,60000000,212597,0,186,3,0,305,13300192,118980,120820,0,666,13507,0.01,0
+8,569830,1000000us,0,0,success,"0 hosts, 0 routers, 5 mobiles, 5 accesspoints
+Simulation time                     : 60000000
+Events raised                       : 219294
+API errors                          : 0
+Messages generated                  : 186
+Messages delivered                  : 4
+Messages incorrect                  : 0
+Message bandwidth                   : 302
+Average delivery time               : 11319813
+Frames transmitted                  : 118982
+Frames received                     : 123494
+Frames corrupted                    : 0
+Frames lost                         : 0
+Frame collisions                    : 13507
+Efficiency (bytes AL) / (bytes PL)  : 0.01
+Transmission cost                   : 0
+EV_NULL                             : 0
+EV_REBOOT                           : 10
+EV_SHUTDOWN                         : 0
+EV_PHYSICALREADY                    : 123494
+EV_APPLICATIONREADY                 : 186
+EV_KEYBOARDREADY                    : 0
+EV_DRAWFRAME                        : 0
+EV_LINKSTATE                        : 0
+EV_FRAMECOLLISION                   : 8515
+EV_PERIODIC                         : 0
+EV_UPDATEGUI                        : 0
+EV_DEBUG0                           : 0
+EV_DEBUG1                           : 0
+EV_DEBUG2                           : 0
+EV_DEBUG3                           : 0
+EV_DEBUG4                           : 0
+EV_TIMER0                           : 0
+EV_TIMER1                           : 0
+EV_TIMER2                           : 600
+EV_TIMER3                           : 590
+EV_TIMER4                           : 56339
+EV_TIMER5                           : 0
+EV_TIMER6                           : 236
+EV_TIMER7                           : 5
+EV_TIMER8                           : 29127
+EV_TIMER9                           : 192
+",8603.360337972641,60000000,219294,0,186,4,0,302,11319813,118982,123494,0,0,13507,0.01,0
+11,569830,1000000us,3,3,success,"0 hosts, 0 routers, 5 mobiles, 5 accesspoints
+Simulation time                     : 60000000
+Events raised                       : 211922
+API errors                          : 0
+Messages generated                  : 186
+Messages delivered                  : 4
+Messages incorrect                  : 0
+Message bandwidth                   : 301
+Average delivery time               : 11353563
+Frames transmitted                  : 118987
+Frames received                     : 120748
+Frames corrupted                    : 2313
+Frames lost                         : 691
+Frame collisions                    : 13507
+Efficiency (bytes AL) / (bytes PL)  : 0.01
+Transmission cost                   : 0
+EV_NULL                             : 0
+EV_REBOOT                           : 10
+EV_SHUTDOWN                         : 0
+EV_PHYSICALREADY                    : 120748
+EV_APPLICATIONREADY                 : 186
+EV_KEYBOARDREADY                    : 0
+EV_DRAWFRAME                        : 0
+EV_LINKSTATE                        : 0
+EV_FRAMECOLLISION                   : 8515
+EV_PERIODIC                         : 0
+EV_UPDATEGUI                        : 0
+EV_DEBUG0                           : 0
+EV_DEBUG1                           : 0
+EV_DEBUG2                           : 0
+EV_DEBUG3                           : 0
+EV_DEBUG4                           : 0
+EV_TIMER0                           : 0
+EV_TIMER1                           : 0
+EV_TIMER2                           : 600
+EV_TIMER3                           : 590
+EV_TIMER4                           : 56337
+EV_TIMER5                           : 0
+EV_TIMER6                           : 236
+EV_TIMER7                           : 5
+EV_TIMER8                           : 24503
+EV_TIMER9                           : 192
+",6966.999171972275,60000000,211922,0,186,4,0,301,11353563,118987,120748,2313,691,13507,0.01,0
+10,569830,1000000us,3,0,success,"0 hosts, 0 routers, 5 mobiles, 5 accesspoints
+Simulation time                     : 60000000
+Events raised                       : 219163
+API errors                          : 0
+Messages generated                  : 186
+Messages delivered                  : 3
+Messages incorrect                  : 0
+Message bandwidth                   : 305
+Average delivery time               : 13300192
+Frames transmitted                  : 119003
+Frames received                     : 123572
+Frames corrupted                    : 2666
+Frames lost                         : 0
+Frame collisions                    : 13507
+Efficiency (bytes AL) / (bytes PL)  : 0.01
+Transmission cost                   : 0
+EV_NULL                             : 0
+EV_REBOOT                           : 10
+EV_SHUTDOWN                         : 0
+EV_PHYSICALREADY                    : 123572
+EV_APPLICATIONREADY                 : 186
+EV_KEYBOARDREADY                    : 0
+EV_DRAWFRAME                        : 0
+EV_LINKSTATE                        : 0
+EV_FRAMECOLLISION                   : 8515
+EV_PERIODIC                         : 0
+EV_UPDATEGUI                        : 0
+EV_DEBUG0                           : 0
+EV_DEBUG1                           : 0
+EV_DEBUG2                           : 0
+EV_DEBUG3                           : 0
+EV_DEBUG4                           : 0
+EV_TIMER0                           : 0
+EV_TIMER1                           : 0
+EV_TIMER2                           : 600
+EV_TIMER3                           : 590
+EV_TIMER4                           : 56337
+EV_TIMER5                           : 0
+EV_TIMER6                           : 236
+EV_TIMER7                           : 5
+EV_TIMER8                           : 28920
+EV_TIMER9                           : 192
+",7435.665989160538,60000000,219163,0,186,3,0,305,13300192,119003,123572,2666,0,13507,0.01,0
+5,569830,300000us,0,3,success,"0 hosts, 0 routers, 5 mobiles, 5 accesspoints
+Simulation time                     : 60000000
+Events raised                       : 1046054
+API errors                          : 0
+Messages generated                  : 677
+Messages delivered                  : 5
+Messages incorrect                  : 0
+Message bandwidth                   : 381
+Average delivery time               : 11969352
+Frames transmitted                  : 875538
+Frames received                     : 541412
+Frames corrupted                    : 0
+Frames lost                         : 1446
+Frame collisions                    : 33227
+Efficiency (bytes AL) / (bytes PL)  : 0.00
+Transmission cost                   : 0
+EV_NULL                             : 0
+EV_REBOOT                           : 10
+EV_SHUTDOWN                         : 0
+EV_PHYSICALREADY                    : 541412
+EV_APPLICATIONREADY                 : 677
+EV_KEYBOARDREADY                    : 0
+EV_DRAWFRAME                        : 0
+EV_LINKSTATE                        : 0
+EV_FRAMECOLLISION                   : 22175
+EV_PERIODIC                         : 0
+EV_UPDATEGUI                        : 0
+EV_DEBUG0                           : 0
+EV_DEBUG1                           : 0
+EV_DEBUG2                           : 0
+EV_DEBUG3                           : 0
+EV_DEBUG4                           : 0
+EV_TIMER0                           : 0
+EV_TIMER1                           : 0
+EV_TIMER2                           : 600
+EV_TIMER3                           : 590
+EV_TIMER4                           : 428240
+EV_TIMER5                           : 0
+EV_TIMER6                           : 516
+EV_TIMER7                           : 5
+EV_TIMER8                           : 51637
+EV_TIMER9                           : 192
+",14699.196726083755,60000000,1046054,0,677,5,0,381,11969352,875538,541412,0,1446,33227,0.00,0
+0,569830,100000us,0,0,success,"0 hosts, 0 routers, 5 mobiles, 5 accesspoints
+Simulation time                     : 60000000
+Events raised                       : 1229861
+API errors                          : 0
+Messages generated                  : 1949
+Messages delivered                  : 1
+Messages incorrect                  : 0
+Message bandwidth                   : 506
+Average delivery time               : 13896157
+Frames transmitted                  : 900183
+Frames received                     : 591634
+Frames corrupted                    : 0
+Frames lost                         : 0
+Frame collisions                    : 46760
+Efficiency (bytes AL) / (bytes PL)  : 0.00
+Transmission cost                   : 0
+EV_NULL                             : 0
+EV_REBOOT                           : 10
+EV_SHUTDOWN                         : 0
+EV_PHYSICALREADY                    : 591634
+EV_APPLICATIONREADY                 : 1949
+EV_KEYBOARDREADY                    : 0
+EV_DRAWFRAME                        : 0
+EV_LINKSTATE                        : 0
+EV_FRAMECOLLISION                   : 31370
+EV_PERIODIC                         : 0
+EV_UPDATEGUI                        : 0
+EV_DEBUG0                           : 0
+EV_DEBUG1                           : 0
+EV_DEBUG2                           : 0
+EV_DEBUG3                           : 0
+EV_DEBUG4                           : 0
+EV_TIMER0                           : 0
+EV_TIMER1                           : 0
+EV_TIMER2                           : 600
+EV_TIMER3                           : 590
+EV_TIMER4                           : 435913
+EV_TIMER5                           : 0
+EV_TIMER6                           : 678
+EV_TIMER7                           : 5
+EV_TIMER8                           : 166920
+EV_TIMER9                           : 192
+",17695.172163009644,60000000,1229861,0,1949,1,0,506,13896157,900183,591634,0,0,46760,0.00,0
+3,569830,100000us,3,3,success,"0 hosts, 0 routers, 5 mobiles, 5 accesspoints
+Simulation time                     : 60000000
+Events raised                       : 1190961
+API errors                          : 0
+Messages generated                  : 1949
+Messages delivered                  : 4
+Messages incorrect                  : 0
+Message bandwidth                   : 338
+Average delivery time               : 13685997
+Frames transmitted                  : 914157
+Frames received                     : 591154
+Frames corrupted                    : 7342
+Frames lost                         : 2136
+Frame collisions                    : 46405
+Efficiency (bytes AL) / (bytes PL)  : 0.00
+Transmission cost                   : 0
+EV_NULL                             : 0
+EV_REBOOT                           : 10
+EV_SHUTDOWN                         : 0
+EV_PHYSICALREADY                    : 591154
+EV_APPLICATIONREADY                 : 1949
+EV_KEYBOARDREADY                    : 0
+EV_DRAWFRAME                        : 0
+EV_LINKSTATE                        : 0
+EV_FRAMECOLLISION                   : 31199
+EV_PERIODIC                         : 0
+EV_UPDATEGUI                        : 0
+EV_DEBUG0                           : 0
+EV_DEBUG1                           : 0
+EV_DEBUG2                           : 0
+EV_DEBUG3                           : 0
+EV_DEBUG4                           : 0
+EV_TIMER0                           : 0
+EV_TIMER1                           : 0
+EV_TIMER2                           : 600
+EV_TIMER3                           : 590
+EV_TIMER4                           : 442753
+EV_TIMER5                           : 0
+EV_TIMER6                           : 692
+EV_TIMER7                           : 5
+EV_TIMER8                           : 121817
+EV_TIMER9                           : 192
+",17848.625137090683,60000000,1190961,0,1949,4,0,338,13685997,914157,591154,7342,2136,46405,0.00,0
+1,569830,100000us,0,3,success,"0 hosts, 0 routers, 5 mobiles, 5 accesspoints
+Simulation time                     : 60000000
+Events raised                       : 1177077
+API errors                          : 0
+Messages generated                  : 1949
+Messages delivered                  : 1
+Messages incorrect                  : 0
+Message bandwidth                   : 506
+Average delivery time               : 13896157
+Frames transmitted                  : 855359
+Frames received                     : 573985
+Frames corrupted                    : 0
+Frames lost                         : 2346
+Frame collisions                    : 55260
+Efficiency (bytes AL) / (bytes PL)  : 0.00
+Transmission cost                   : 0
+EV_NULL                             : 0
+EV_REBOOT                           : 10
+EV_SHUTDOWN                         : 0
+EV_PHYSICALREADY                    : 573985
+EV_APPLICATIONREADY                 : 1949
+EV_KEYBOARDREADY                    : 0
+EV_DRAWFRAME                        : 0
+EV_LINKSTATE                        : 0
+EV_FRAMECOLLISION                   : 37155
+EV_PERIODIC                         : 0
+EV_UPDATEGUI                        : 0
+EV_DEBUG0                           : 0
+EV_DEBUG1                           : 0
+EV_DEBUG2                           : 0
+EV_DEBUG3                           : 0
+EV_DEBUG4                           : 0
+EV_TIMER0                           : 0
+EV_TIMER1                           : 0
+EV_TIMER2                           : 600
+EV_TIMER3                           : 590
+EV_TIMER4                           : 411263
+EV_TIMER5                           : 0
+EV_TIMER6                           : 774
+EV_TIMER7                           : 5
+EV_TIMER8                           : 150554
+EV_TIMER9                           : 192
+",18531.636094093323,60000000,1177077,0,1949,1,0,506,13896157,855359,573985,0,2346,55260,0.00,0
+2,569830,100000us,3,0,success,"0 hosts, 0 routers, 5 mobiles, 5 accesspoints
+Simulation time                     : 60000000
+Events raised                       : 1253686
+API errors                          : 0
+Messages generated                  : 1949
+Messages delivered                  : 4
+Messages incorrect                  : 0
+Message bandwidth                   : 338
+Average delivery time               : 13689540
+Frames transmitted                  : 887648
+Frames received                     : 597561
+Frames corrupted                    : 9356
+Frames lost                         : 0
+Frame collisions                    : 52841
+Efficiency (bytes AL) / (bytes PL)  : 0.00
+Transmission cost                   : 0
+EV_NULL                             : 0
+EV_REBOOT                           : 10
+EV_SHUTDOWN                         : 0
+EV_PHYSICALREADY                    : 597561
+EV_APPLICATIONREADY                 : 1949
+EV_KEYBOARDREADY                    : 0
+EV_DRAWFRAME                        : 0
+EV_LINKSTATE                        : 0
+EV_FRAMECOLLISION                   : 35593
+EV_PERIODIC                         : 0
+EV_UPDATEGUI                        : 0
+EV_DEBUG0                           : 0
+EV_DEBUG1                           : 0
+EV_DEBUG2                           : 0
+EV_DEBUG3                           : 0
+EV_DEBUG4                           : 0
+EV_TIMER0                           : 0
+EV_TIMER1                           : 0
+EV_TIMER2                           : 600
+EV_TIMER3                           : 590
+EV_TIMER4                           : 427768
+EV_TIMER5                           : 0
+EV_TIMER6                           : 755
+EV_TIMER7                           : 5
+EV_TIMER8                           : 188663
+EV_TIMER9                           : 192
+",18867.19670200348,60000000,1253686,0,1949,4,0,338,13689540,887648,597561,9356,0,52841,0.00,0
